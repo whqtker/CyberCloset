@@ -15,7 +15,7 @@ def index():
 
 @app.route('/brands')
 def get_brands():
-    brands = ['Nike', 'Adidas', 'Zara', 'H&M', 'Gucci', 'Chanel']
+    brands = ['나이키', '아디다스', '자라', 'H&M', '구찌', '샤넬', '루이비통', '프라다', '발렌시아가', '버버리', '펜디', '톰브라운', '알렉산더맥퀸', '마르지엘라', '마르셀로불론', '발망', '페라가모', '페르소나']
     return jsonify(brands)
 
 @app.route('/insert')
