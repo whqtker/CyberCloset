@@ -11,7 +11,11 @@ collection = db['my']
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('main.html')
+
+@app.route('/insert')
+def insert():
+    return render_template('insert.html')
 
 @app.route('/save_data', methods=['POST'])
 def save_data():
