@@ -34,6 +34,19 @@
             }
         }
 
+        window.onload = function() {
+        fetch('/brands')
+            .then(response => response.json())
+            .then(brands => {
+                const brandList = document.getElementById('brand-list');
+                brands.forEach(brand => {
+                    const option = document.createElement('option');
+                    option.value = brand;
+                    brandList.appendChild(option);
+                });
+            });
+    }
+
         window.addEventListener('DOMContentLoaded', () => {
             document.querySelector('form').addEventListener('submit', (event) => {
                 console.log('submit');
@@ -74,6 +87,21 @@
         <select id="detail" name="detail" required>
             <option value="">선택하세요</option>
         </select>
+        <label for="brand">브랜드:</label>
+        <input type="text" id="brand" name="brand" list="brand-list" placeholder="브랜드 검색" required>
+        <datalist id="brand-list">
+            <script>
+                fetch('/brands')
+                    .then(response => response.json())
+                    .then(brands => {
+                        brands.forEach(brand => {
+                            const option = document.createElement('option');
+                            option.value = brand;
+                            document.getElementById('brand-list').appendChild(option);
+                        });
+                    });
+            </script>
+        </datalist>
         <label for="color">색깔:</label>
         <input type="text" id="color" name="color" required>
         <label for="image">사진:</label>

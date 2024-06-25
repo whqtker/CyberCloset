@@ -13,6 +13,11 @@ collection = db['my']
 def index():
     return render_template('main.html')
 
+@app.route('/brands')
+def get_brands():
+    brands = ['Nike', 'Adidas', 'Zara', 'H&M', 'Gucci', 'Chanel']
+    return jsonify(brands)
+
 @app.route('/insert')
 def insert():
     return render_template('insert.html')
@@ -21,6 +26,7 @@ def insert():
 def save_data():
     type = request.form['type']
     detail = request.form['detail']
+    brand = request.form['brand']
     color = request.form['color']
     image = request.files['image']
 
@@ -31,6 +37,7 @@ def save_data():
     data = {
         'type': type,
         'detail': detail,
+        'brand': brand,
         'color': color,
         'image': image_filename
     }
