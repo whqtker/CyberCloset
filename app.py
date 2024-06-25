@@ -28,19 +28,22 @@ def save_data():
     detail = request.form['detail']
     brand = request.form['brand']
     color = request.form['color']
-    image = request.files['image']
-
-    # 이미지 파일 저장
-    image_filename = image.filename
-    image.save(os.path.join('static', image_filename))
+    image = request.files.get('image', None)
 
     data = {
         'type': type,
         'detail': detail,
         'brand': brand,
-        'color': color,
-        'image': image_filename
+        'color': color
     }
+
+    if image:
+        # 이미지 파일 저장
+        image_filename = image.filename
+        image.save(os.path.join('static', image_filename))
+        data['image'] = image_filename
+    else:
+        data['image'] = 'default.jpg'  # 기본 이미지 파일명
 
     # MongoDB에 데이터 저장
     collection.insert_one(data)
