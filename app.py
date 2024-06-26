@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 from pymongo import MongoClient
 import os
+from bson.objectid import ObjectId
 
 app = Flask(__name__)
 
@@ -30,6 +31,14 @@ def show():
 
     # 조회한 데이터를 템플릿에 전달
     return render_template('show.html', data=data)
+
+@app.route('/delete/<string:item_id>', methods=['DELETE'])
+def delete_item(item_id):
+    try:
+        collection.delete_one({'_id': ObjectId(item_id)})
+        return jsonify({'message': '항목이 삭제되었습니다.'}), 200
+    except Exception as e:
+        return jsonify({'error': '삭제 중 오류가 발생했습니다.'}), 500
 
 @app.route('/save_data', methods=['POST'])
 def save_data():
