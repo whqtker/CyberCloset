@@ -6,11 +6,17 @@
 <body>
     <h1>Main Page</h1>
     <p>Cyber Closet</p>
-    <a href="{{ url_for('insert') }}">
-        <button>등록하기</button>
+    <a href="{{ url_for('insert_my') }}">
+        <button>옷 등록하기</button>
     </a>
-    <a href="{{ url_for('show') }}">
-        <button>조회하기</button>
+    <a href="{{ url_for('show_my') }}">
+        <button>옷 조회하기</button>
+    </a>
+    <a href="{{ url_for('insert_outfit') }}">
+        <button>코디 등록하기</button>
+    </a>
+    <a href="{{ url_for('show_outfit') }}">
+        <button>코디 조회하기</button>
     </a>
 </body>
 </html>

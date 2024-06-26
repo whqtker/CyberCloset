@@ -55,7 +55,7 @@
                 const formData = new FormData(event.target);
                 formData.append('image', document.getElementById('image').files[0]); // 사진 파일 추가
 
-                fetch('/save_data', {
+                fetch('/save_data_my', {
                     method: 'POST',
                     body: formData
                 })
@@ -73,7 +73,7 @@
 </head>
 
 <body>
-    <form action="/save_data" method="POST" enctype="multipart/form-data">
+    <form action="/save_data_my" method="POST" enctype="multipart/form-data">
         <label for="type">옷 종류:</label>
         <select id="type" name="type" onchange="updateTypeOptions()" required>
             <option value="">선택하세요</option>
