@@ -89,7 +89,7 @@ def save_data_outfit():
         detail = request.form[f'detail-{i}']
         brand = request.form[f'brand-{i}']
         color = request.form[f'color-{i}']
-        image = request.files.get(f'image-{i}', None)
+        image = request.files.get('image', None)
 
         outfit_item = {
             'type': type,
