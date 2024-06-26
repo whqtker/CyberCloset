@@ -15,7 +15,8 @@ def index():
 
 @app.route('/brands')
 def get_brands():
-    brands = ['나이키', '아디다스', '자라', 'H&M', '구찌', '샤넬', '루이비통', '프라다', '발렌시아가', '버버리', '펜디', '톰브라운', '알렉산더맥퀸', '마르지엘라', '마르셀로불론', '발망', '페라가모', '페르소나']
+    # MongoDB에서 distinct한 브랜드 목록 가져오기
+    brands = list(collection.distinct('brand'))
     return jsonify(brands)
 
 @app.route('/insert')
@@ -29,7 +30,6 @@ def show():
 
     # 조회한 데이터를 템플릿에 전달
     return render_template('show.html', data=data)
-
 
 @app.route('/save_data', methods=['POST'])
 def save_data():
