@@ -22,6 +22,15 @@ def get_brands():
 def insert():
     return render_template('insert.html')
 
+@app.route('/show')
+def show():
+    # MongoDB에서 데이터 조회
+    data = list(collection.find())
+
+    # 조회한 데이터를 템플릿에 전달
+    return render_template('show.html', data=data)
+
+
 @app.route('/save_data', methods=['POST'])
 def save_data():
     type = request.form['type']

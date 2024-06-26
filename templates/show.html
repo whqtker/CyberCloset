@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Display</title>
+</head>
+<body>
+    <h1>My Closet</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Detail</th>
+                <th>Brand</th>
+                <th>Color</th>
+                <th>Image</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in data %}
+            <tr>
+                <td>{{ item.type }}</td>
+                <td>{{ item.detail }}</td>
+                <td>{{ item.brand }}</td>
+                <td>{{ item.color }}</td>
+                <td>
+                    {% if item.image %}
+                    <img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.image }}" width="100">
+                    {% else %}
+                    No image
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="/" class="btn btn-secondary">돌아가기</a>
+</body>
+</html>
