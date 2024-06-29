@@ -1,5 +1,17 @@
 import { typeOptions } from './typeOptions.js';
 
+function populateTypeOptions() {
+    const typeSelect = document.getElementById('type');
+    
+    // typeOptions의 키를 사용하여 옵션 추가
+    Object.keys(typeOptions).forEach(type => {
+        const option = document.createElement('option');
+        option.value = type;
+        option.textContent = type;
+        typeSelect.appendChild(option);
+    });
+}
+
 function updateTypeOptions() {
     const typeSelect = document.getElementById('type');
     const detailSelect = document.getElementById('detail');
@@ -54,6 +66,7 @@ function setupFormSubmission() {
 }
 
 function init() {
+    populateTypeOptions();
     loadBrands();
     setupFormSubmission();
     
