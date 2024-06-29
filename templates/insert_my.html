@@ -4,78 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Save Data</title>
-    <script>
-        // 옷 종류에 따른 세부 종류 옵션 정의
-        const typeOptions = {
-            '상의': ['반팔T', '셔츠/블라우스', '스포츠 상의', '니트/스웨터', '피케/카라T', '민소매T', '긴팔T', '맨투맨', '후드티', '기타'],
-            '바지': ['반바지', '데님팬츠', '트레이닝/조거팬츠', '슬랙스/슈트팬츠', '점프슈트', '레깅스', '코튼팬츠', '스포츠 하의', '기타'],
-            '신발': ['신발', '샌들', '기타'],
-            '모자': ['캡/야구모자', '버킷/사파리햇', '기타'],
-            '악세서리': ['목걸이', '귀걸이', '반지', '팔찌', '시계', '벨트', '선글라스', '안경', '기타']
-        };
-
-        // 옷 종류 선택 시 세부 종류 옵션 업데이트
-        function updateTypeOptions() {
-            const typeSelect = document.getElementById('type');
-            const detailSelect = document.getElementById('detail');
-            const selectedType = typeSelect.value;
-
-            // 세부 종류 옵션 초기화
-            detailSelect.innerHTML = '';
-
-            // 선택한 옷 종류에 따른 세부 종류 옵션 추가
-            if (selectedType in typeOptions) {
-                typeOptions[selectedType].forEach(option => {
-                    const optionElement = document.createElement('option');
-                    optionElement.value = option;
-                    optionElement.textContent = option;
-                    detailSelect.appendChild(optionElement);
-                });
-            }
-        }
-
-        window.onload = function() {
-        fetch('/brands')
-            .then(response => response.json())
-            .then(brands => {
-                const brandList = document.getElementById('brand-list');
-                brands.forEach(brand => {
-                    const option = document.createElement('option');
-                    option.value = brand;
-                    brandList.appendChild(option);
-                });
-            });
-    }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            document.querySelector('form').addEventListener('submit', (event) => {
-                console.log('submit');
-                event.preventDefault();
-
-                const formData = new FormData(event.target);
-                formData.append('image', document.getElementById('image').files[0]); // 사진 파일 추가
-
-                fetch('/save_data_my', {
-                    method: 'POST',
-                    body: formData
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        alert(data.message); // 저장 성공 메시지 표시
-                        window.location.reload(); // 페이지 리로드
-                    })
-                    .catch(error => {
-                        alert(error.message); // 오류 메시지 표시
-                    });
-            });
-        });
-    </script>
+    <script type="module" src="./static/script.js"></script>
 </head>
 
 <body>
     <form action="/save_data_my" method="POST" enctype="multipart/form-data">
         <label for="type">옷 종류:</label>
-        <select id="type" name="type" onchange="updateTypeOptions()" required>
+        <select id="type" name="type" required>
             <option value="">선택하세요</option>
             <option value="상의">상의</option>
             <option value="바지">바지</option>
@@ -89,19 +24,7 @@
         </select>
         <label for="brand">브랜드:</label>
         <input type="text" id="brand" name="brand" list="brand-list" placeholder="브랜드 검색" required>
-        <datalist id="brand-list">
-            <script>
-                fetch('/brands')
-                    .then(response => response.json())
-                    .then(brands => {
-                        brands.forEach(brand => {
-                            const option = document.createElement('option');
-                            option.value = brand;
-                            document.getElementById('brand-list').appendChild(option);
-                        });
-                    });
-            </script>
-        </datalist>
+        <datalist id="brand-list"></datalist>
         <label for="color">색깔:</label>
         <input type="text" id="color" name="color" required>
         <label for="image">사진:</label>
