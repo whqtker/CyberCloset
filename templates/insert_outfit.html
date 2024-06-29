@@ -17,6 +17,7 @@
         let outfitItemCount = 1;
 
         function addOutfitItem() {
+            const outfitContainer = document.getElementById('outfit-container');
             const outfitItem = document.createElement('div');
             outfitItem.classList.add('outfit-item');
             outfitItem.innerHTML = `
@@ -38,7 +39,7 @@
         <label for="color">색깔:</label>
         <input type="text" id="color" name="color-${outfitItemCount}" required>
     `;
-            document.querySelector('form').appendChild(outfitItem);
+            outfitContainer.appendChild(outfitItem);
             outfitItemCount++;
             document.getElementById('outfit_count').value = outfitItemCount;
         }
@@ -128,24 +129,26 @@
 
 <body>
     <form action="/insert_outfit" method="POST" enctype="multipart/form-data">
-        <div class="outfit-item">
-            <label for="type">옷 종류:</label>
-            <select id="type" name="type-0" onchange="updateTypeOptions(0)" required>
-                <option value="">선택하세요</option>
-                <option value="상의">상의</option>
-                <option value="바지">바지</option>
-                <option value="신발">신발</option>
-                <option value="모자">모자</option>
-                <option value="악세서리">악세서리</option>
-            </select>
-            <label for="detail">세부 종류:</label>
-            <select id="detail" name="detail-0" required>
-                <option value="">선택하세요</option>
-            </select>
-            <label for="brand">브랜드:</label>
-            <input type="text" id="brand" name="brand-0" list="brand-list" placeholder="브랜드 검색" required>
-            <label for="color">색깔:</label>
-            <input type="text" id="color" name="color-0" required>
+        <div id="outfit-container">
+            <div class="outfit-item">
+                <label for="type">옷 종류:</label>
+                <select id="type" name="type-0" onchange="updateTypeOptions(0)" required>
+                    <option value="">선택하세요</option>
+                    <option value="상의">상의</option>
+                    <option value="바지">바지</option>
+                    <option value="신발">신발</option>
+                    <option value="모자">모자</option>
+                    <option value="악세서리">악세서리</option>
+                </select>
+                <label for="detail">세부 종류:</label>
+                <select id="detail" name="detail-0" required>
+                    <option value="">선택하세요</option>
+                </select>
+                <label for="brand">브랜드:</label>
+                <input type="text" id="brand" name="brand-0" list="brand-list" placeholder="브랜드 검색" required>
+                <label for="color">색깔:</label>
+                <input type="text" id="color" name="color-0" required>
+            </div>
         </div>
         <button type="button" onclick="addOutfitItem()">+ 추가</button>
         <label for="image">사진:</label>
@@ -155,7 +158,6 @@
 
         <input type="hidden" name="outfit_count" value="" id="outfit_count">
     </form>
-
 </body>
 
 </html>
