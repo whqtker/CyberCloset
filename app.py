@@ -39,19 +39,36 @@ def insert_outfit():
 
 @app.route('/show_outfit')
 def show_outfit():
-    # MongoDB에서 데이터 조회
+    # MongoDB에서 모든 데이터 조회
     data = list(outfit.find())
+    
+    # 모든 데이터를 템플릿에 전달
+    return render_template('show_outfit.html', outfits=data)
 
-    # 조회한 데이터를 템플릿에 전달
-    return render_template('show_outfit.html', data=data)
-
-@app.route('/delete/<string:item_id>', methods=['DELETE'])
-def delete_item(item_id):
+@app.route('/delete_my/<string:item_id>', methods=['DELETE'])
+def delete_my_item(item_id):
     try:
         my.delete_one({'_id': ObjectId(item_id)})
         return jsonify({'message': '항목이 삭제되었습니다.'}), 200
     except Exception as e:
         return jsonify({'error': '삭제 중 오류가 발생했습니다.'}), 500
+    
+@app.route('/delete_outfit/<outfit_id>/<int:index>', methods=['DELETE'])
+def delete_item(outfit_id, index):
+    try:
+        # outfit_id를 사용하여 해당 문서를 찾고, 특정 인덱스의 아이템을 삭제
+        outfit.update_one(
+            {'_id': ObjectId(outfit_id)},
+            {'$unset': {f'outfit.{index}': 1}}
+        )
+        outfit.update_one(
+            {'_id': ObjectId(outfit_id)},
+            {'$pull': {'outfit': None}}
+        )
+        return '', 204
+    except Exception as e:
+        print(e)
+        return '', 500
 
 @app.route('/save_data_my', methods=['POST'])
 def save_data_my():
@@ -97,22 +114,24 @@ def save_data_outfit():
             'brand': brand,
             'color': color
         }
-
-        if image:
-            # 이미지 파일 저장
-            image_filename = image.filename
-            image.save(os.path.join('static', image_filename))
-            outfit_item['image'] = image_filename
-        else:
-            outfit_item['image'] = 'default.jpg'  # 기본 이미지 파일명
-
         outfit_data.append(outfit_item)
 
+    data = {
+        'outfit': outfit_data
+    }
+
+    if image:
+        # 이미지 파일 저장
+        image_filename = image.filename
+        image.save(os.path.join('static', image_filename))
+        data['image'] = image_filename
+    else:
+        data['image'] = 'default.jpg'  # 기본 이미지 파일명  
+        
     # MongoDB에 데이터 저장
-    outfit.insert_one({'outfit': outfit_data})
+    outfit.insert_one(data)
 
     return jsonify({'message': '저장되었습니다.'}), 200
-
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Outfit Display</title>
+</head>
+<body>
+    <h1>My Outfits</h1>
+    {% for outfit_entry in outfits %}
+        <h2>Outfit {{ loop.index }}</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Detail</th>
+                    <th>Brand</th>
+                    <th>Color</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in outfit_entry.outfit %}
+                <tr>
+                    <td>{{ item.type }}</td>
+                    <td>{{ item.detail }}</td>
+                    <td>{{ item.brand }}</td>
+                    <td>{{ item.color }}</td>
+                    <td>
+                        <button class="delete-btn" data-id="{{ outfit_entry._id }}" data-index="{{ loop.index0 }}">삭제</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if outfit_entry.image %}
+            <img src="{{ url_for('static', filename=outfit_entry.image) }}" alt="Outfit Image" width="200">
+        {% else %}
+            <p>No image available</p>
+        {% endif %}
+        <hr>
+    {% endfor %}
+
+    <a href="/" class="btn btn-secondary">돌아가기</a>
+
+    <script>
+        // 삭제 버튼 클릭 이벤트 처리
+        const deleteBtns = document.querySelectorAll('.delete-btn');
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const outfitId = btn.dataset.id;
+                const itemIndex = btn.dataset.index;
+                deleteItem(outfitId, itemIndex);
+            });
+        });
+
+        // 서버에 삭제 요청을 보내는 함수
+        async function deleteItem(outfitId, index) {
+            try {
+                const response = await fetch(`/delete_outfit/${outfitId}/${index}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    alert('항목이 삭제되었습니다.');
+                    location.reload();
+                } else {
+                    alert('삭제 중 오류가 발생했습니다.');
+                }
+            } catch (error) {
+                console.error('Error deleting item:', error);
+                alert('삭제 중 오류가 발생했습니다.');
+            }
+        }
+    </script>
+</body>
+</html>

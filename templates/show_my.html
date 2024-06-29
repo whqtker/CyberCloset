@@ -53,7 +53,7 @@
         // 서버에 삭제 요청을 보내는 함수
         async function deleteItem(id) {
             try {
-                const response = await fetch(`/delete/${id}`, {
+                const response = await fetch(`/delete_my/${id}`, {
                     method: 'DELETE'
                 });
                 if (response.ok) {
