@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template, redirect, url_for
 from pymongo import MongoClient
 import os
 from bson.objectid import ObjectId
+import json
 
 app = Flask(__name__)
 
@@ -33,17 +34,17 @@ def show_my():
     # 조회한 데이터를 템플릿에 전달
     return render_template('show_my.html', data=data)
 
-@app.route('/insert_outfit')
-def insert_outfit():
-    return render_template('insert_outfit.html')
-
 @app.route('/show_outfit')
 def show_outfit():
     # MongoDB에서 모든 데이터 조회
     data = list(outfit.find())
     
     # 모든 데이터를 템플릿에 전달
-    return render_template('show_outfit.html', outfits=data)
+    return render_template('show_outfit.html', outfits=data) 
+
+@app.route('/insert_outfit')
+def insert_outfit():
+    return render_template('insert_outfit.html')
 
 @app.route('/delete_my/<string:item_id>', methods=['DELETE'])
 def delete_my_item(item_id):
@@ -100,38 +101,31 @@ def save_data_my():
 
 @app.route('/save_data_outfit', methods=['POST'])
 def save_data_outfit():
-    outfit_data = []
-    for i in range(int(request.form['outfit_count'])):
-        type = request.form[f'type-{i}']
-        detail = request.form[f'detail-{i}']
-        brand = request.form[f'brand-{i}']
-        color = request.form[f'color-{i}']
-        image = request.files.get('image', None)
+    try:
+        outfit_data = json.loads(request.form.get('outfit', '[]'))
+        image = request.files.get('image')
 
-        outfit_item = {
-            'type': type,
-            'detail': detail,
-            'brand': brand,
-            'color': color
-        }
-        outfit_data.append(outfit_item)
+        if not outfit_data:
+            return jsonify({"message": "최소한 하나의 옷 정보를 입력해주세요."}), 400
 
-    data = {
-        'outfit': outfit_data
-    }
+        if not image:
+            return jsonify({"message": "이미지를 업로드해 주세요."}), 400
 
-    if image:
         # 이미지 파일 저장
         image_filename = image.filename
         image.save(os.path.join('static', image_filename))
-        data['image'] = image_filename
-    else:
-        data['image'] = 'default.jpg'  # 기본 이미지 파일명  
-        
-    # MongoDB에 데이터 저장
-    outfit.insert_one(data)
 
-    return jsonify({'message': '저장되었습니다.'}), 200
+        data = {
+            'outfit': outfit_data,
+            'image': image_filename
+        }
+        
+        # MongoDB에 데이터 저장
+        outfit.insert_one(data)
+
+        return jsonify({'message': '저장되었습니다.'}), 200
+    except Exception as e:
+        return jsonify({"message": f"오류 발생: {str(e)}"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -60,7 +60,6 @@
             }
         }
 
-
         window.onload = function () {
             fetch('/brands')
                 .then(response => response.json())
@@ -88,15 +87,26 @@
                 }
 
                 // 옷 정보 폼 데이터 추가
-                const typeSelect = document.getElementById('type');
-                const detailSelect = document.getElementById('detail');
-                const brandInput = document.getElementById('brand');
-                const colorInput = document.getElementById('color');
+                const outfitItems = document.querySelectorAll('.outfit-item');
+                const outfit = [];
 
-                formData.append('type', typeSelect.value);
-                formData.append('detail', detailSelect.value);
-                formData.append('brand', brandInput.value);
-                formData.append('color', colorInput.value);
+                outfitItems.forEach((item, index) => {
+                    const type = item.querySelector(`[name^="type-"]`).value;
+                    const detail = item.querySelector(`[name^="detail-"]`).value;
+                    const brand = item.querySelector(`[name^="brand-"]`).value;
+                    const color = item.querySelector(`[name^="color-"]`).value;
+
+                    if (type && detail && brand && color) {
+                        outfit.push({ type, detail, brand, color });
+                    }
+                });
+
+                if (outfit.length === 0) {
+                    alert('최소한 하나의 옷 정보를 입력해주세요.');
+                    return;
+                }
+
+                formData.append('outfit', JSON.stringify(outfit));
                 formData.append('image', imageInput.files[0]);
 
                 fetch('/save_data_outfit', {
@@ -105,11 +115,11 @@
                 })
                     .then(response => response.json())
                     .then(data => {
-                        alert(data.message); // 저장 성공 메시지 표시
-                        window.location.reload(); // 페이지 리로드
+                        alert(data.message);
+                        window.location.reload();
                     })
                     .catch(error => {
-                        alert(error.message); // 오류 메시지 표시
+                        alert('오류가 발생했습니다: ' + error);
                     });
             });
         });
@@ -117,7 +127,7 @@
 </head>
 
 <body>
-    <form action="/save_data_outfit" method="POST" enctype="multipart/form-data">
+    <form action="/insert_outfit" method="POST" enctype="multipart/form-data">
         <div class="outfit-item">
             <label for="type">옷 종류:</label>
             <select id="type" name="type-0" onchange="updateTypeOptions(0)" required>
