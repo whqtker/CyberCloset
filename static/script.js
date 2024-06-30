@@ -56,23 +56,19 @@ function addOutfitItem() {
 function updateTypeOptions(index = '') {
     let typeSelect, detailSelect;
     if (index === '') {
+        // 인덱스가 제공되지 않은 경우, ID를 사용하여 요소를 직접 찾습니다.
         typeSelect = document.getElementById('type');
         detailSelect = document.getElementById('detail');
     } else {
-        // Corrected to use template literals for dynamic ID generation
+        // 인덱스가 제공된 경우, 인덱스를 포함한 ID로 요소를 찾습니다.
         typeSelect = document.getElementById(`type-${index}`);
         detailSelect = document.getElementById(`detail-${index}`);
-    }
-
-    if (!typeSelect || !detailSelect) {
-        console.error('Type or detail select element not found');
-        return;
     }
 
     const selectedType = typeSelect.value;
     detailSelect.innerHTML = '<option value="">선택하세요</option>';
 
-    if (selectedType in typeOptions) {
+    if (typeOptions && selectedType in typeOptions) {
         typeOptions[selectedType].forEach(option => {
             const optionElement = document.createElement('option');
             optionElement.value = option;
@@ -125,10 +121,16 @@ function isInsertOutfitPage() {
 function init() {
     populateTypeOptions();
     loadBrands();
-    setupFormSubmission();
 
-    // 옷 종류 선택 시 이벤트 리스너 추가
-    document.getElementById('type').addEventListener('change', updateTypeOptions);
+    // insert_my.html 페이지에서만 실행
+    if (!isInsertOutfitPage()) {
+        const typeSelect = document.getElementById('type');
+        if (typeSelect) {
+            typeSelect.addEventListener('change', updateTypeOptions);
+        }
+    }
+    
+    setupFormSubmission();
 
     // insert_outfit.html 전용 초기화 코드
     if (isInsertOutfitPage()) {
