@@ -4,75 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Save Data</title>
+    <script type="module" src="./static/script.js"></script>
     <script>
-        // 옷 종류에 따른 세부 종류 옵션 정의
-        const typeOptions = {
-            '상의': ['반팔T', '셔츠/블라우스', '스포츠 상의', '니트/스웨터', '피케/카라T', '민소매T', '긴팔T', '맨투맨', '후드티', '기타'],
-            '바지': ['반바지', '데님팬츠', '트레이닝/조거팬츠', '슬랙스/슈트팬츠', '점프슈트', '레깅스', '코튼팬츠', '스포츠 하의', '기타'],
-            '신발': ['신발', '샌들', '기타'],
-            '모자': ['캡/야구모자', '버킷/사파리햇', '기타'],
-            '악세서리': ['목걸이', '귀걸이', '반지', '팔찌', '시계', '벨트', '선글라스', '안경', '기타']
-        };
-
-        let outfitItemCount = 1;
-
-        function addOutfitItem() {
-            const outfitContainer = document.getElementById('outfit-container');
-            const outfitItem = document.createElement('div');
-            outfitItem.classList.add('outfit-item');
-            outfitItem.innerHTML = `
-        <label for="type">옷 종류:</label>
-        <select id="type" name="type-${outfitItemCount}" onchange="updateTypeOptions(${outfitItemCount})" required>
-            <option value="">선택하세요</option>
-            <option value="상의">상의</option>
-            <option value="바지">바지</option>
-            <option value="신발">신발</option>
-            <option value="모자">모자</option>
-            <option value="악세서리">악세서리</option>
-        </select>
-        <label for="detail">세부 종류:</label>
-        <select id="detail" name="detail-${outfitItemCount}" required>
-            <option value="">선택하세요</option>
-        </select>
-        <label for="brand">브랜드:</label>
-        <input type="text" id="brand" name="brand-${outfitItemCount}" list="brand-list" placeholder="브랜드 검색" required>
-        <label for="color">색깔:</label>
-        <input type="text" id="color" name="color-${outfitItemCount}" required>
-    `;
-            outfitContainer.appendChild(outfitItem);
-            outfitItemCount++;
-            document.getElementById('outfit_count').value = outfitItemCount;
-        }
-
-        function updateTypeOptions(index) {
-            const typeSelect = document.querySelector(`[name="type-${index}"]`);
-            const detailSelect = document.querySelector(`[name="detail-${index}"]`);
-            const selectedType = typeSelect.value;
-
-            detailSelect.innerHTML = '';
-
-            if (selectedType in typeOptions) {
-                typeOptions[selectedType].forEach(option => {
-                    const optionElement = document.createElement('option');
-                    optionElement.value = option;
-                    optionElement.textContent = option;
-                    detailSelect.appendChild(optionElement);
-                });
-            }
-        }
-
-        window.onload = function () {
-            fetch('/brands')
-                .then(response => response.json())
-                .then(brands => {
-                    const brandList = document.getElementById('brand-list');
-                    brands.forEach(brand => {
-                        const option = document.createElement('option');
-                        option.value = brand;
-                        brandList.appendChild(option);
-                    });
-                });
-        }
 
         window.addEventListener('DOMContentLoaded', () => {
             document.querySelector('form').addEventListener('submit', (event) => {
@@ -131,17 +64,12 @@
     <form action="/insert_outfit" method="POST" enctype="multipart/form-data">
         <div id="outfit-container">
             <div class="outfit-item">
-                <label for="type">옷 종류:</label>
-                <select id="type" name="type-0" onchange="updateTypeOptions(0)" required>
+                <label for="type-0">옷 종류:</label>
+                <select id="type-0" name="type-0" onchange="updateTypeOptions('0')" required>
                     <option value="">선택하세요</option>
-                    <option value="상의">상의</option>
-                    <option value="바지">바지</option>
-                    <option value="신발">신발</option>
-                    <option value="모자">모자</option>
-                    <option value="악세서리">악세서리</option>
                 </select>
-                <label for="detail">세부 종류:</label>
-                <select id="detail" name="detail-0" required>
+                <label for="detail-0">세부 종류:</label>
+                <select id="detail-0" name="detail-0" required>
                     <option value="">선택하세요</option>
                 </select>
                 <label for="brand">브랜드:</label>
