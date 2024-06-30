@@ -5,59 +5,6 @@
     <meta charset="UTF-8">
     <title>Save Data</title>
     <script type="module" src="./static/script.js"></script>
-    <script>
-
-        window.addEventListener('DOMContentLoaded', () => {
-            document.querySelector('form').addEventListener('submit', (event) => {
-                event.preventDefault();
-
-                const formData = new FormData(event.target);
-                const imageInput = document.getElementById('image');
-
-                // 사진 파일이 없으면 제출 불가
-                if (!imageInput.files[0]) {
-                    alert('사진을 업로드해 주세요.');
-                    return;
-                }
-
-                // 옷 정보 폼 데이터 추가
-                const outfitItems = document.querySelectorAll('.outfit-item');
-                const outfit = [];
-
-                outfitItems.forEach((item, index) => {
-                    const type = item.querySelector(`[name^="type-"]`).value;
-                    const detail = item.querySelector(`[name^="detail-"]`).value;
-                    const brand = item.querySelector(`[name^="brand-"]`).value;
-                    const color = item.querySelector(`[name^="color-"]`).value;
-
-                    if (type && detail && brand && color) {
-                        outfit.push({ type, detail, brand, color });
-                    }
-                });
-
-                if (outfit.length === 0) {
-                    alert('최소한 하나의 옷 정보를 입력해주세요.');
-                    return;
-                }
-
-                formData.append('outfit', JSON.stringify(outfit));
-                formData.append('image', imageInput.files[0]);
-
-                fetch('/save_data_outfit', {
-                    method: 'POST',
-                    body: formData
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        alert(data.message);
-                        window.location.reload();
-                    })
-                    .catch(error => {
-                        alert('오류가 발생했습니다: ' + error);
-                    });
-            });
-        });
-    </script>
 </head>
 
 <body>

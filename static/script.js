@@ -118,17 +118,66 @@ function setupFormSubmission() {
     });
 }
 
+function isInsertOutfitPage() {
+    return window.location.pathname.endsWith('insert_outfit.html');
+}
+
 function init() {
     populateTypeOptions();
     loadBrands();
     setupFormSubmission();
-    
+
     // 옷 종류 선택 시 이벤트 리스너 추가
     document.getElementById('type').addEventListener('change', updateTypeOptions);
+
+    // insert_outfit.html 전용 초기화 코드
+    if (isInsertOutfitPage()) {
+        document.querySelector('form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const imageInput = document.getElementById('image');
+            // 사진 파일이 없으면 제출 불가
+            if (!imageInput.files[0]) {
+                alert('사진을 업로드해 주세요.');
+                return;
+            }
+            // 옷 정보 폼 데이터 추가
+            const outfitItems = document.querySelectorAll('.outfit-item');
+            const outfit = [];
+            outfitItems.forEach((item, index) => {
+                const type = item.querySelector(`[name^="type-"]`).value;
+                const detail = item.querySelector(`[name^="detail-"]`).value;
+                const brand = item.querySelector(`[name^="brand-"]`).value;
+                const color = item.querySelector(`[name^="color-"]`).value;
+                if (type && detail && brand && color) {
+                    outfit.push({ type, detail, brand, color });
+                }
+            });
+            if (outfit.length === 0) {
+                alert('최소한 하나의 옷 정보를 입력해주세요.');
+                return;
+            }
+            formData.append('outfit', JSON.stringify(outfit));
+            formData.append('image', imageInput.files[0]);
+            fetch('/save_data_outfit', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    window.location.reload();
+                })
+                .catch(error => {
+                    alert('오류가 발생했습니다: ' + error);
+                });
+        });
+    }
 }
 
 window.addOutfitItem = addOutfitItem;
 window.updateTypeOptions = updateTypeOptions;
 
 // DOMContentLoaded 이벤트에 init 함수 연결
+window.removeEventListener('DOMContentLoaded', init);
 window.addEventListener('DOMContentLoaded', init);
