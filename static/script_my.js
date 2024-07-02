@@ -1,4 +1,5 @@
-// script_my.js
+import { typeOptions } from './typeOptions.js';
+
 function populateTypeOptions() {
     const typeSelects = document.querySelectorAll('#type');
     
@@ -65,17 +66,50 @@ function setupFormSubmission() {
     });
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    // 삭제 버튼 클릭 이벤트 처리
+    const deleteBtns = document.querySelectorAll('.delete-btn');
+    deleteBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const itemId = btn.dataset.id;
+            deleteItem(itemId);
+        });
+    });
+});
+
+// 서버에 삭제 요청을 보내는 함수
+async function deleteItem(id) {
+    try {
+        const response = await fetch(`/delete_my/${id}`, {
+            method: 'DELETE'
+        });
+        if (response.ok) {
+            alert('항목이 삭제되었습니다.');
+            location.reload();
+        } else {
+            alert('삭제 중 오류가 발생했습니다.');
+        }
+    } catch (error) {
+        console.error('Error deleting item:', error);
+        alert('삭제 중 오류가 발생했습니다.');
+    }
+}
+
 function init() {
     populateTypeOptions();
-    loadBrands();
+    const brandList = document.getElementById('brand-list');
+    if (brandList) {
+        loadBrands();
+    }
     const typeSelect = document.getElementById('type');
     if (typeSelect) {
         typeSelect.addEventListener('change', updateTypeOptions);
     }
-    setupFormSubmission();
+    const form = document.querySelector('form');
+    if (form) {
+        setupFormSubmission();
+    }
 }
-
-import { typeOptions } from './typeOptions.js';
 
 window.updateTypeOptions = updateTypeOptions;
 
