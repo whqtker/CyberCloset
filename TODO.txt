@@ -1,5 +1,4 @@
 진행 중
-insert_outfit에서 Save가 되지 않음 => my, outfit 관련 script.js 분리 및 최적화
 show_outfit에서 코디 좋아요 기능 구현
 ----
 예정

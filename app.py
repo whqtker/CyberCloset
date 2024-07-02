@@ -117,7 +117,8 @@ def save_data_outfit():
 
         data = {
             'outfit': outfit_data,
-            'image': image_filename
+            'image': image_filename,
+            'liked': False  # 'liked'의 기본값을 False로 설정
         }
         
         # MongoDB에 데이터 저장
@@ -130,12 +131,14 @@ def save_data_outfit():
 @app.route('/like_outfit', methods=['POST'])
 def like_outfit():
     outfit_id = request.json.get('outfitId')
+    like = request.json.get('like')  # 좋아요 여부를 나타내는 값
     if not outfit_id:
         return jsonify({'error': 'Invalid outfit ID'}), 400
     try:
-        outfit.update_one({'_id': ObjectId(outfit_id)}, {'$inc': {'likes': 1}})
+        # 좋아요 여부를 업데이트
+        outfit.update_one({'_id': ObjectId(outfit_id)}, {'$set': {'liked': like}})
         updated_outfit = outfit.find_one({'_id': ObjectId(outfit_id)})
-        return jsonify({'likes': updated_outfit.get('likes', 0)}), 200
+        return jsonify({'liked': updated_outfit.get('liked', False)}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
