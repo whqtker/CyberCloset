@@ -1,43 +1,49 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Outfit Display</title>
 </head>
+
 <body>
     <h1>My Outfits</h1>
     {% for outfit_entry in outfits %}
-        <h2>Outfit {{ loop.index }}</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Detail</th>
-                    <th>Brand</th>
-                    <th>Color</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in outfit_entry.outfit %}
-                <tr>
-                    <td>{{ item.type }}</td>
-                    <td>{{ item.detail }}</td>
-                    <td>{{ item.brand }}</td>
-                    <td>{{ item.color }}</td>
-                    <td>
-                        <button class="delete-btn" data-id="{{ outfit_entry._id }}" data-index="{{ loop.index0 }}">삭제</button>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <h2>Outfit {{ loop.index }}</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Detail</th>
+                <th>Brand</th>
+                <th>Color</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in outfit_entry.outfit %}
+            <tr>
+                <td>{{ item.type }}</td>
+                <td>{{ item.detail }}</td>
+                <td>{{ item.brand }}</td>
+                <td>{{ item.color }}</td>
+                <td>
+                    <button class="delete-btn" data-id="{{ outfit_entry._id }}"
+                        data-index="{{ loop.index0 }}">삭제</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-        {% if outfit_entry.image %}
-            <img src="{{ url_for('static', filename=outfit_entry.image) }}" alt="Outfit Image" width="200">
-        {% else %}
-            <p>No image available</p>
-        {% endif %}
-        <hr>
+    {% if outfit_entry.image %}
+    <img src="{{ url_for('static', filename=outfit_entry.image) }}" alt="Outfit Image" width="200">
+    {% else %}
+    <p>No image available</p>
+    {% endif %}
+    <hr>
+
+    <button type="button" class="like-btn" data-id="{{ outfit_entry._id }}">좋아요</button>
+    <span class="like-count" data-id="{{ outfit_entry._id }}">{{ outfit_entry.likes|default(0) }}</span>
     {% endfor %}
 
     <a href="/" class="btn btn-secondary">돌아가기</a>
@@ -70,6 +76,35 @@
                 alert('삭제 중 오류가 발생했습니다.');
             }
         }
+
+        document.querySelectorAll('.like-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const outfitId = this.dataset.id;
+                likeOutfit(outfitId);
+            });
+        });
+
+        async function likeOutfit(outfitId) {
+            try {
+                const response = await fetch(`/like_outfit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ outfitId: outfitId })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    document.querySelector(`.like-count[data-id="${outfitId}"]`).textContent = data.likes;
+                } else {
+                    alert('좋아요 처리 중 오류가 발생했습니다.');
+                }
+            } catch (error) {
+                console.error('Error liking outfit:', error);
+                alert('좋아요 처리 중 오류가 발생했습니다.');
+            }
+        }
     </script>
 </body>
+
 </html>

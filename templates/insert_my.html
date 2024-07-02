@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Save Data</title>
-    <script type="module" src="./static/script.js"></script>
+    <script type="module" src="./static/script_my.js"></script>
 </head>
 
 <body>
-    <form action="/insert_my" method="POST" enctype="multipart/form-data">
+    <form action="/save_data_my" method="POST" enctype="multipart/form-data">
         <label for="type">옷 종류:</label>
         <select id="type" name="type" onchange="updateTypeOptions()" required>
             <option value="">선택하세요</option>

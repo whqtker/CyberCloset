@@ -4,11 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Save Data</title>
-    <script type="module" src="./static/script.js"></script>
 </head>
 
 <body>
-    <form action="/insert_outfit" method="POST" enctype="multipart/form-data">
+    <form action="/save_data_outfit" method="POST" enctype="multipart/form-data">
         <div id="outfit-container">
             <div class="outfit-item">
                 <label for="type-0">옷 종류:</label>
@@ -33,6 +32,8 @@
 
         <input type="hidden" name="outfit_count" value="" id="outfit_count">
     </form>
+    <datalist id="brand-list"></datalist>
+    <script type="module" src="./static/script_outfit.js"></script>
 </body>
 
 </html>

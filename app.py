@@ -127,5 +127,17 @@ def save_data_outfit():
     except Exception as e:
         return jsonify({"message": f"오류 발생: {str(e)}"}), 500
 
+@app.route('/like_outfit', methods=['POST'])
+def like_outfit():
+    outfit_id = request.json.get('outfitId')
+    if not outfit_id:
+        return jsonify({'error': 'Invalid outfit ID'}), 400
+    try:
+        outfit.update_one({'_id': ObjectId(outfit_id)}, {'$inc': {'likes': 1}})
+        updated_outfit = outfit.find_one({'_id': ObjectId(outfit_id)})
+        return jsonify({'likes': updated_outfit.get('likes', 0)}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 if __name__ == '__main__':
     app.run(debug=True)
