@@ -31,7 +31,6 @@ def insert_my():
 def show_my():
     # MongoDB에서 데이터 조회
     data = list(my.find())
-
     # 조회한 데이터를 템플릿에 전달
     return render_template('show_my.html', data=data)
 
@@ -39,9 +38,8 @@ def show_my():
 def show_outfit():
     # MongoDB에서 모든 데이터 조회
     data = list(outfit.find())
-    
     # 모든 데이터를 템플릿에 전달
-    return render_template('show_outfit.html', outfits=data) 
+    return render_template('show_outfit.html', outfits=data)
 
 @app.route('/insert_outfit')
 def insert_outfit():
@@ -54,7 +52,15 @@ def delete_my_item(item_id):
         return jsonify({'message': '항목이 삭제되었습니다.'}), 200
     except Exception as e:
         return jsonify({'error': '삭제 중 오류가 발생했습니다.'}), 500
-    
+
+@app.route('/delete_outfit/<string:outfit_id>', methods=['DELETE'])
+def delete_outfit(outfit_id):
+    try:
+        outfit.delete_one({'_id': ObjectId(outfit_id)})
+        return jsonify({'message': 'Outfit이 삭제되었습니다.'}), 200
+    except Exception as e:
+        return jsonify({'error': '삭제 중 오류가 발생했습니다.'}), 500
+
 @app.route('/delete_outfit/<outfit_id>/<int:index>', methods=['DELETE'])
 def delete_item(outfit_id, index):
     try:
@@ -142,6 +148,6 @@ def like_outfit():
         return jsonify({'liked': updated_outfit.get('liked', False)}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -39,8 +39,28 @@
     {% endif %}
     <hr>
     <button type="button" class="like-btn" data-id="{{ outfit_entry._id }}" data-liked="false">좋아요</button>
+    <button type="button" class="delete-outfit-btn" data-id="{{ outfit_entry._id }}">Outfit 삭제</button>
     {% endfor %}
     <a href="/" class="btn btn-secondary">돌아가기</a>
     <script type="module" src="./static/script_outfit.js"></script>
+    <script>
+        document.querySelectorAll('.delete-outfit-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const outfitId = this.getAttribute('data-id');
+                if (confirm('정말로 이 Outfit을 삭제하시겠습니까?')) {
+                    fetch(`/delete_outfit/${outfitId}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            location.reload();
+                        } else {
+                            alert('삭제 중 오류가 발생했습니다.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
