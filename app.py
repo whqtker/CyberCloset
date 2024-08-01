@@ -3,6 +3,7 @@ from pymongo import MongoClient
 import os
 from bson.objectid import ObjectId
 import json
+import uuid
 
 app = Flask(__name__)
 
@@ -88,7 +89,7 @@ def save_data_my():
 
     if image:
         # 이미지 파일 저장
-        image_filename = image.filename
+        image_filename = f"{uuid.uuid4()}_{image.filename}"
         image.save(os.path.join('static', image_filename))
         data['image'] = image_filename
     else:
@@ -112,7 +113,7 @@ def save_data_outfit():
             return jsonify({"message": "이미지를 업로드해 주세요."}), 400
 
         # 이미지 파일 저장
-        image_filename = image.filename
+        image_filename = f"{uuid.uuid4()}_{image.filename}"
         image.save(os.path.join('static', image_filename))
 
         data = {
