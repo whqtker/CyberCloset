@@ -14,6 +14,7 @@
                 <th>Detail</th>
                 <th>Brand</th>
                 <th>Color</th>
+                <th>Memo</th> <!-- Added Memo column header -->
                 <th>Owned</th>
                 <th>Actions</th>
             </tr>
@@ -25,6 +26,7 @@
                 <td>{{ item.detail }}</td>
                 <td>{{ item.brand }}</td>
                 <td>{{ item.color }}</td>
+                <td>{{ item.memo }}</td> <!-- Added Memo field -->
                 <td>
                     <input type="checkbox" class="owned-checkbox" data-id="{{ outfit_entry._id }}" data-index="{{ loop.index0 }}" {% if item.owned %}checked{% endif %}>
                 </td>
@@ -65,13 +67,11 @@
                 }
             });
         });
-
         document.querySelectorAll('.owned-checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 const outfitId = this.getAttribute('data-id');
                 const index = this.getAttribute('data-index');
                 const owned = this.checked;
-
                 fetch(`/update_owned/${outfitId}/${index}`, {
                     method: 'POST',
                     headers: {

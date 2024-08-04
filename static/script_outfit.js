@@ -38,6 +38,8 @@ function addOutfitItem() {
         <input type="text" id="brand-${window.outfitItemCount}" name="brand-${window.outfitItemCount}" list="brand-list" placeholder="브랜드 검색" required>
         <label for="color-${window.outfitItemCount}">색깔:</label>
         <input type="text" id="color-${window.outfitItemCount}" name="color-${window.outfitItemCount}" required>
+        <label for="note-${window.outfitItemCount}">메모:</label>
+        <textarea id="note-${window.outfitItemCount}" name="note-${window.outfitItemCount}" rows="1"></textarea>
     `;
     outfitContainer.appendChild(outfitItem);
     
@@ -109,6 +111,16 @@ function setupFormSubmission() {
             });
         });
     }
+}
+
+function previewImage(event) {
+    const reader = new FileReader();
+    reader.onload = function(){
+        const output = document.getElementById('image-preview');
+        output.src = reader.result;
+        output.style.display = 'block';
+    };
+    reader.readAsDataURL(event.target.files[0]);
 }
 
 // 삭제 버튼 클릭 이벤트 처리
@@ -219,6 +231,7 @@ function init() {
 
 window.addOutfitItem = addOutfitItem;
 window.updateTypeOptions = updateTypeOptions;
+window.previewImage = previewImage;
 
 // DOMContentLoaded 이벤트에 init 함수 연결
 window.removeEventListener('DOMContentLoaded', init);

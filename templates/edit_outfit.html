@@ -6,6 +6,7 @@
 <body>
     <h1>Edit Outfit</h1>
     <form action="{{ url_for('update_outfit', outfit_id=outfit._id) }}" method="post" enctype="multipart/form-data">
+        <input type="hidden" id="outfit_count" name="outfit_count" value="{{ outfit|length }}">
         <div id="outfit-items">
             {% for item in outfit.outfit %}
             <div class="outfit-item">
@@ -17,6 +18,8 @@
                 <input type="text" id="brand-{{ loop.index0 }}" name="outfit[{{ loop.index0 }}][brand]" value="{{ item.brand }}" required><br>
                 <label for="color-{{ loop.index0 }}">Color:</label>
                 <input type="text" id="color-{{ loop.index0 }}" name="outfit[{{ loop.index0 }}][color]" value="{{ item.color }}" required><br>
+                <label for="memo-{{ loop.index0 }}">Memo:</label>
+                <input type="text" id="memo-{{ loop.index0 }}" name="outfit[{{ loop.index0 }}][memo]" value="{{ item.memo }}"><br>
             </div>
             {% endfor %}
         </div>

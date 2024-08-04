@@ -194,13 +194,18 @@ def update_outfit(outfit_id):
     try:
         # Parse the outfit data from the form
         outfit_data = []
-        for key in request.form:
-            if key.startswith('outfit'):
-                index = int(key.split('[')[1].split(']')[0])
-                field = key.split('[')[2].split(']')[0]
-                while len(outfit_data) <= index:
-                    outfit_data.append({})
-                outfit_data[index][field] = request.form[key]
+        outfit_count = int(request.form.get('outfit_count', 0))
+        for i in range(outfit_count):
+            outfit_item = {
+                'type': request.form.get(f'outfit[{i}][type]'),
+                'detail': request.form.get(f'outfit[{i}][detail]'),
+                'brand': request.form.get(f'outfit[{i}][brand]'),
+                'color': request.form.get(f'outfit[{i}][color]'),
+                'memo': request.form.get(f'outfit[{i}][memo]', '')  # Add memo field
+            }
+            # 필터링: 모든 필드가 비어있지 않은 경우에만 추가
+            if any(outfit_item.values()):
+                outfit_data.append(outfit_item)
 
         image = request.files.get('image', None)
 
