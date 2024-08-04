@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Save Data</title>
 </head>
-
 <body>
     <form action="/save_data_outfit" method="POST" enctype="multipart/form-data">
         <div id="outfit-container">
@@ -26,14 +24,24 @@
         </div>
         <button type="button" onclick="addOutfitItem()">+ 추가</button>
         <label for="image">사진:</label>
-        <input type="file" id="image" name="image" accept="image/*" required>
+        <input type="file" id="image" name="image" accept="image/*" required onchange="previewImage(event)">
+        <img id="image-preview" src="#" alt="Image Preview" style="display:none; max-width: 200px; max-height: 200px;"/>
         <button type="submit">Save</button>
         <a href="/" class="btn btn-secondary">돌아가기</a>
-
         <input type="hidden" name="outfit_count" value="" id="outfit_count">
     </form>
     <datalist id="brand-list"></datalist>
     <script type="module" src="./static/script_outfit.js"></script>
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const output = document.getElementById('image-preview');
+                output.src = reader.result;
+                output.style.display = 'block';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
 </body>
-
 </html>

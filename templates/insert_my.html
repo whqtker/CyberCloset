@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Save Data</title>
-    <script type="module" src="./static/script_my.js"></script>
 </head>
-
 <body>
     <form action="/save_data_my" method="POST" enctype="multipart/form-data">
         <label for="type">옷 종류:</label>
-        <select id="type" name="type" onchange="updateTypeOptions()" required>
+        <select id="type" name="type" required>
             <option value="">선택하세요</option>
         </select>
         <label for="detail">세부 종류:</label>
@@ -19,14 +16,25 @@
         </select>
         <label for="brand">브랜드:</label>
         <input type="text" id="brand" name="brand" list="brand-list" placeholder="브랜드 검색" required>
-        <datalist id="brand-list"></datalist>
         <label for="color">색깔:</label>
         <input type="text" id="color" name="color" required>
         <label for="image">사진:</label>
-        <input type="file" id="image" name="image" accept="image/*">
+        <input type="file" id="image" name="image" accept="image/*" required onchange="previewImage(event)">
+        <img id="image-preview" src="#" alt="Image Preview" style="display:none; max-width: 200px; max-height: 200px;"/>
         <button type="submit">Save</button>
         <a href="/" class="btn btn-secondary">돌아가기</a>
     </form>
+    <datalist id="brand-list"></datalist>
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const output = document.getElementById('image-preview');
+                output.src = reader.result;
+                output.style.display = 'block';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
 </body>
-
 </html>
