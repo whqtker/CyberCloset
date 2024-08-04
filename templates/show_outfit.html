@@ -14,6 +14,7 @@
                 <th>Detail</th>
                 <th>Brand</th>
                 <th>Color</th>
+                <th>Owned</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -25,8 +26,10 @@
                 <td>{{ item.brand }}</td>
                 <td>{{ item.color }}</td>
                 <td>
-                    <button class="delete-btn" data-id="{{ outfit_entry._id }}"
-                        data-index="{{ loop.index0 }}">삭제</button>
+                    <input type="checkbox" class="owned-checkbox" data-id="{{ outfit_entry._id }}" data-index="{{ loop.index0 }}" {% if item.owned %}checked{% endif %}>
+                </td>
+                <td>
+                    <button class="delete-btn" data-id="{{ outfit_entry._id }}" data-index="{{ loop.index0 }}">삭제</button>
                 </td>
             </tr>
             {% endfor %}
@@ -60,6 +63,27 @@
                         }
                     });
                 }
+            });
+        });
+
+        document.querySelectorAll('.owned-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const outfitId = this.getAttribute('data-id');
+                const index = this.getAttribute('data-index');
+                const owned = this.checked;
+
+                fetch(`/update_owned/${outfitId}/${index}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ owned })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        alert('업데이트 중 오류가 발생했습니다.');
+                    }
+                });
             });
         });
     </script>

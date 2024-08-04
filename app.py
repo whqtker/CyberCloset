@@ -122,6 +122,10 @@ def save_data_outfit():
         image_filename = f"{uuid.uuid4()}_{image.filename}"
         image.save(os.path.join('static', image_filename))
 
+        # Add 'owned' field to each item
+        for item in outfit_data:
+            item['owned'] = item.get('owned', False)
+
         data = {
             'outfit': outfit_data,
             'image': image_filename,
@@ -216,6 +220,18 @@ def update_outfit(outfit_id):
         return redirect(url_for('show_outfit'))
     except Exception as e:
         return jsonify({"message": f"오류 발생: {str(e)}"}), 500
+
+@app.route('/update_owned/<string:outfit_id>/<int:index>', methods=['POST'])
+def update_owned(outfit_id, index):
+    try:
+        owned = request.json.get('owned')
+        outfit.update_one(
+            {'_id': ObjectId(outfit_id)},
+            {'$set': {f'outfit.{index}.owned': owned}}
+        )
+        return '', 204
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
