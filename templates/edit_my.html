@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Item</title>
+</head>
+<body>
+    <h1>Edit Item</h1>
+    <form action="{{ url_for('update_my_item', item_id=item._id) }}" method="post" enctype="multipart/form-data">
+        <label for="type">Type:</label>
+        <input type="text" id="type" name="type" value="{{ item.type }}" required><br>
+        <label for="detail">Detail:</label>
+        <input type="text" id="detail" name="detail" value="{{ item.detail }}" required><br>
+        <label for="brand">Brand:</label>
+        <input type="text" id="brand" name="brand" value="{{ item.brand }}" required><br>
+        <label for="color">Color:</label>
+        <input type="text" id="color" name="color" value="{{ item.color }}" required><br>
+        <label for="image">Image:</label>
+        <input type="file" id="image" name="image"><br>
+        <button type="submit">Update</button>
+    </form>
+    <a href="/show_my">Cancel</a>
+</body>
+</html>

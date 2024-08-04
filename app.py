@@ -149,5 +149,73 @@ def like_outfit():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/edit_my/<string:item_id>')
+def edit_my_item(item_id):
+    item = my.find_one({'_id': ObjectId(item_id)})
+    return render_template('edit_my.html', item=item)
+
+@app.route('/update_my/<string:item_id>', methods=['POST'])
+def update_my_item(item_id):
+    type = request.form['type']
+    detail = request.form['detail']
+    brand = request.form['brand']
+    color = request.form['color']
+    image = request.files.get('image', None)
+
+    data = {
+        'type': type,
+        'detail': detail,
+        'brand': brand,
+        'color': color
+    }
+
+    if image:
+        # 이미지 파일 저장
+        image_filename = f"{uuid.uuid4()}_{image.filename}"
+        image.save(os.path.join('static', image_filename))
+        data['image'] = image_filename
+
+    # MongoDB에 데이터 업데이트
+    my.update_one({'_id': ObjectId(item_id)}, {'$set': data})
+
+    return redirect(url_for('show_my'))
+
+@app.route('/edit_outfit/<string:outfit_id>')
+def edit_outfit(outfit_id):
+    outfit_entry = outfit.find_one({'_id': ObjectId(outfit_id)})
+    return render_template('edit_outfit.html', outfit=outfit_entry)
+
+@app.route('/update_outfit/<string:outfit_id>', methods=['POST'])
+def update_outfit(outfit_id):
+    try:
+        # Parse the outfit data from the form
+        outfit_data = []
+        for key in request.form:
+            if key.startswith('outfit'):
+                index = int(key.split('[')[1].split(']')[0])
+                field = key.split('[')[2].split(']')[0]
+                while len(outfit_data) <= index:
+                    outfit_data.append({})
+                outfit_data[index][field] = request.form[key]
+
+        image = request.files.get('image', None)
+
+        data = {
+            'outfit': outfit_data
+        }
+
+        if image:
+            # Save the image file
+            image_filename = f"{uuid.uuid4()}_{image.filename}"
+            image.save(os.path.join('static', image_filename))
+            data['image'] = image_filename
+
+        # Update the MongoDB document
+        outfit.update_one({'_id': ObjectId(outfit_id)}, {'$set': data})
+
+        return redirect(url_for('show_outfit'))
+    except Exception as e:
+        return jsonify({"message": f"오류 발생: {str(e)}"}), 500
+
 if __name__ == '__main__':
     app.run(debug=True)

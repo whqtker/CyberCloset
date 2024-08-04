@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Outfit</title>
+</head>
+<body>
+    <h1>Edit Outfit</h1>
+    <form action="{{ url_for('update_outfit', outfit_id=outfit._id) }}" method="post" enctype="multipart/form-data">
+        <div id="outfit-items">
+            {% for item in outfit.outfit %}
+            <div class="outfit-item">
+                <label for="type-{{ loop.index0 }}">Type:</label>
+                <input type="text" id="type-{{ loop.index0 }}" name="outfit[{{ loop.index0 }}][type]" value="{{ item.type }}" required><br>
+                <label for="detail-{{ loop.index0 }}">Detail:</label>
+                <input type="text" id="detail-{{ loop.index0 }}" name="outfit[{{ loop.index0 }}][detail]" value="{{ item.detail }}" required><br>
+                <label for="brand-{{ loop.index0 }}">Brand:</label>
+                <input type="text" id="brand-{{ loop.index0 }}" name="outfit[{{ loop.index0 }}][brand]" value="{{ item.brand }}" required><br>
+                <label for="color-{{ loop.index0 }}">Color:</label>
+                <input type="text" id="color-{{ loop.index0 }}" name="outfit[{{ loop.index0 }}][color]" value="{{ item.color }}" required><br>
+            </div>
+            {% endfor %}
+        </div>
+        <label for="image">Image:</label>
+        <input type="file" id="image" name="image"><br>
+        <button type="submit">Update Outfit</button>
+    </form>
+    <a href="{{ url_for('show_outfit') }}">Cancel</a>
+</body>
+</html>
