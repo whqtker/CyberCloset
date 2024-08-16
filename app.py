@@ -4,14 +4,9 @@ import os
 from bson.objectid import ObjectId
 import json
 import uuid
+from MongoDBConn import client, db, my, outfit
 
 app = Flask(__name__)
-
-# MongoDB 클라이언트 연결
-client = MongoClient('mongodb://localhost:27017')
-db = client['project']
-my = db['my']
-outfit = db['outfit']
 
 @app.route('/')
 def index():
