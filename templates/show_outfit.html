@@ -48,7 +48,7 @@
     <a href="{{ url_for('edit_outfit', outfit_id=outfit_entry._id) }}" class="btn btn-primary">수정</a>
     {% endfor %}
     <a href="/" class="btn btn-secondary">돌아가기</a>
-    <script type="module" src="./static/script_outfit.js"></script>
+    <script type="module" src="./script/script_outfit.js"></script>
     <script>
         document.querySelectorAll('.delete-outfit-btn').forEach(button => {
             button.addEventListener('click', function() {
