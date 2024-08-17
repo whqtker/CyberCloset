@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>로그인</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/register_login_styles.css') }}">
+</head>
+<body>
+    <h1>로그인</h1>
+    <form action="{{ url_for('login') }}" method="post">
+        <label for="username">사용자 이름:</label>
+        <input type="text" id="username" name="username" required><br>
+        <label for="password">비밀번호:</label>
+        <input type="password" id="password" name="password" required><br>
+        <button type="submit">로그인</button>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">돌아가기</a>
+    </form>
+    <p>계정이 없으신가요? <a href="{{ url_for('register') }}">회원가입</a></p>
+</body>
+</html>

@@ -1,12 +1,14 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 from pymongo import MongoClient
 import os
 from bson.objectid import ObjectId
 import json
 import uuid
-from MongoDBConn import client, db, my, outfit
+from werkzeug.security import generate_password_hash, check_password_hash
+from MongoDBConn import client, db, my, outfit, users
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # 세션을 위한 비밀 키 설정
 
 @app.route('/')
 def index():
@@ -232,6 +234,47 @@ def update_owned(outfit_id, index):
         return '', 204
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        
+        # 비밀번호 해싱
+        hashed_password = generate_password_hash(password, method='sha256')
+        
+        # 사용자 정보 저장
+        users.insert_one({
+            'username': username,
+            'email': email,
+            'password': hashed_password
+        })
+        
+        return redirect(url_for('login'))
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        # 사용자 정보 조회
+        user = users.find_one({'username': username})
+        
+        if user and check_password_hash(user['password'], password):
+            session['username'] = user['username']
+            return redirect(url_for('index'))
+        else:
+            return '로그인 실패. 사용자 이름 또는 비밀번호를 확인하세요.'
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)
