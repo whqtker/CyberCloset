@@ -43,6 +43,26 @@ function loadBrands() {
         });
 }
 
+function previewImage(event) {
+    // FileReader 객체 생성
+    const reader = new FileReader();
+
+    // 파일 읽기에 성공했을 때 실행되는 이벤트 핸들러
+    reader.onload = function(){
+        // 이미지 미리보기를 위한 img 요소 선택
+        const output = document.getElementById('image-preview');
+
+        // img 요소의 src 속성을 파일 경로로 설정
+        output.src = reader.result;
+
+        // img 요소를 화면에 표시
+        output.style.display = 'block';
+    };
+
+    // 파일을 읽어오기
+    reader.readAsDataURL(event.target.files[0]);
+}
+
 function setupFormSubmission() {
     document.querySelector('form').addEventListener('submit', (event) => {
         console.log('submit');
@@ -112,6 +132,7 @@ function init() {
 }
 
 window.updateTypeOptions = updateTypeOptions;
+window.previewImage = previewImage;
 
 // DOMContentLoaded 이벤트에 init 함수 연결
 window.removeEventListener('DOMContentLoaded', init);
