@@ -7,6 +7,19 @@
 <body>
     <h1>Main Page</h1>
     <p>Cyber Closet</p>
+    {% if session.get('username') %}
+        <p>Welcome, {{ session['username'] }}!</p>
+        <a href="{{ url_for('logout') }}">
+            <button>로그아웃</button>
+        </a>
+    {% else %}
+        <a href="{{ url_for('register') }}">
+            <button>회원가입</button>
+        </a>
+        <a href="{{ url_for('login') }}">
+            <button>로그인</button>
+        </a>
+    {% endif %}
     <a href="{{ url_for('insert_my') }}">
         <button>옷 등록하기</button>
     </a>
@@ -18,12 +31,6 @@
     </a>
     <a href="{{ url_for('show_outfit') }}">
         <button>코디 조회하기</button>
-    </a>
-    <a href="{{ url_for('register') }}">
-        <button>회원가입</button>
-    </a>
-    <a href="{{ url_for('login') }}">
-        <button>로그인</button>
     </a>
 </body>
 </html>

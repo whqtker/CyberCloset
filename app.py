@@ -5,10 +5,19 @@ from bson.objectid import ObjectId
 import json
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
 from MongoDBConn import client, db, my, outfit, users
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # 세션을 위한 비밀 키 설정
+# app.secret_key = 'your_secret_key'  # 세션을 위한 비밀 키 설정
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
 def index():
@@ -21,10 +30,12 @@ def get_brands():
     return jsonify(brands)
 
 @app.route('/insert_my')
+@login_required
 def insert_my():
     return render_template('insert_my.html')
 
 @app.route('/show_my')
+@login_required
 def show_my():
     # MongoDB에서 데이터 조회
     data = list(my.find())
@@ -32,6 +43,7 @@ def show_my():
     return render_template('show_my.html', data=data)
 
 @app.route('/show_outfit')
+@login_required
 def show_outfit():
     # MongoDB에서 모든 데이터 조회
     data = list(outfit.find())
@@ -39,6 +51,7 @@ def show_outfit():
     return render_template('show_outfit.html', outfits=data)
 
 @app.route('/insert_outfit')
+@login_required
 def insert_outfit():
     return render_template('insert_outfit.html')
 
@@ -265,10 +278,10 @@ def login():
         user = users.find_one({'username': username})
         
         if user and check_password_hash(user['password'], password):
-            session['username'] = user['username']
+            session['username'] = username
             return redirect(url_for('index'))
         else:
-            return '로그인 실패. 사용자 이름 또는 비밀번호를 확인하세요.'
+            return render_template('login.html', error='Invalid username or password')
     return render_template('login.html')
 
 @app.route('/logout')
