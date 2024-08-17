@@ -9,7 +9,7 @@ from functools import wraps
 from MongoDBConn import client, db, my, outfit, users
 
 app = Flask(__name__)
-# app.secret_key = 'your_secret_key'  # 세션을 위한 비밀 키 설정
+app.secret_key = '시크릿키'  # 세션을 위한 비밀 키 설정
 
 def login_required(f):
     @wraps(f)
@@ -38,7 +38,7 @@ def insert_my():
 @login_required
 def show_my():
     # MongoDB에서 데이터 조회
-    data = list(my.find())
+    data = list(my.find({'username': session['username']}))
     # 조회한 데이터를 템플릿에 전달
     return render_template('show_my.html', data=data)
 
@@ -46,7 +46,7 @@ def show_my():
 @login_required
 def show_outfit():
     # MongoDB에서 모든 데이터 조회
-    data = list(outfit.find())
+    data = list(outfit.find({'username': session['username']}))
     # 모든 데이터를 템플릿에 전달
     return render_template('show_outfit.html', outfits=data)
 
@@ -89,6 +89,7 @@ def delete_item(outfit_id, index):
         return '', 500
 
 @app.route('/save_data_my', methods=['POST'])
+@login_required
 def save_data_my():
     type = request.form['type']
     detail = request.form['detail']
@@ -100,13 +101,14 @@ def save_data_my():
         'type': type,
         'detail': detail,
         'brand': brand,
-        'color': color
+        'color': color,
+        'username': session['username']  # 사용자 정보 추가
     }
 
     if image:
         # 이미지 파일 저장
         image_filename = f"{uuid.uuid4()}_{image.filename}"
-        image.save(os.path.join('static', image_filename))
+        image.save(os.path.join('static/img', image_filename))
         data['image'] = image_filename
     else:
         data['image'] = 'default.jpg'  # 기본 이미지 파일명
@@ -117,6 +119,7 @@ def save_data_my():
     return jsonify({'message': '저장되었습니다.'}), 200
 
 @app.route('/save_data_outfit', methods=['POST'])
+@login_required
 def save_data_outfit():
     try:
         outfit_data = json.loads(request.form.get('outfit', '[]'))
@@ -130,7 +133,7 @@ def save_data_outfit():
 
         # 이미지 파일 저장
         image_filename = f"{uuid.uuid4()}_{image.filename}"
-        image.save(os.path.join('static', image_filename))
+        image.save(os.path.join('static/img', image_filename))
 
         # Add 'owned' field to each item
         for item in outfit_data:
@@ -139,7 +142,8 @@ def save_data_outfit():
         data = {
             'outfit': outfit_data,
             'image': image_filename,
-            'liked': False  # 'liked'의 기본값을 False로 설정
+            'liked': False,  # 'liked'의 기본값을 False로 설정
+            'username': session['username']  # 사용자 정보 추가
         }
 
         # MongoDB에 데이터 저장
