@@ -25,7 +25,7 @@
                 <td>{{ item.color }}</td>
                 <td>
                     {% if item.image %}
-                    <img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.image }}" width="100">
+                    <img src="{{ url_for('static', filename='img/' ~ item.image) }}" alt="{{ item.image }}" width="100">
                     {% else %}
                     No image
                     {% endif %}
@@ -41,5 +41,5 @@
 
     <a href="/" class="btn btn-secondary">돌아가기</a>
 
-    <script type="module" src="./script/script_my.js"></script></body>
+    <script type="module" src="./static/script/script_my.js"></script></body>
 </html>
