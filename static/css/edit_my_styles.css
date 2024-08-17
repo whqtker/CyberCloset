@@ -79,12 +79,3 @@ a.btn-primary {
 a.btn:hover {
     opacity: 0.8;
 }
-
-img#image-preview {
-    display: block;
-    margin: 10px auto;
-    max-width: 200px;
-    max-height: 200px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}

@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Edit Item</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/edit_my_styles.css') }}">
 </head>
 <body>
     <h1>Edit Item</h1>
@@ -17,7 +18,7 @@
         <label for="image">Image:</label>
         <input type="file" id="image" name="image"><br>
         <button type="submit">Update</button>
+        <a href="/show_my" class="btn btn-secondary">돌아가기</a>
     </form>
-    <a href="/show_my">Cancel</a>
 </body>
 </html>

@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Edit Outfit</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/edit_outfit_styles.css') }}">
 </head>
 <body>
     <h1>Edit Outfit</h1>
@@ -25,8 +26,8 @@
         </div>
         <label for="image">Image:</label>
         <input type="file" id="image" name="image"><br>
-        <button type="submit">Update Outfit</button>
+        <button type="submit">수정</button>
+        <a href="{{ url_for('show_outfit') }}" class="btn btn-secondary">돌아가기</a>
     </form>
-    <a href="{{ url_for('show_outfit') }}">Cancel</a>
 </body>
 </html>
