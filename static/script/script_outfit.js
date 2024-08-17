@@ -179,6 +179,45 @@ async function likeOutfit(outfitId, isLiked, btn) {
         alert('좋아요 처리 중 오류가 발생했습니다.');
     }
 }
+// 삭제 버튼 클릭 이벤트 처리
+document.querySelectorAll('.delete-outfit-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const outfitId = this.getAttribute('data-id');
+        if (confirm('정말로 이 Outfit을 삭제하시겠습니까?')) {
+            fetch(`/delete_outfit/${outfitId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('삭제 중 오류가 발생했습니다.');
+                }
+            });
+        }
+    });
+});
+
+// 소유 여부 체크박스 변경 이벤트 처리
+document.querySelectorAll('.owned-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        const outfitId = this.getAttribute('data-id');
+        const index = this.getAttribute('data-index');
+        const owned = this.checked;
+        fetch(`/update_owned/${outfitId}/${index}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ owned })
+        })
+        .then(response => {
+            if (!response.ok) {
+                alert('업데이트 중 오류가 발생했습니다.');
+            }
+        });
+    });
+});
 
 function init() {
     populateTypeOptions();
