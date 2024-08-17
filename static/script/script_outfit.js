@@ -1,11 +1,15 @@
 import { typeOptions } from './typeOptions.js';
 
+// 옵션을 동적으로 추가
 function populateTypeOptions() {
-    // 'type-'로 시작하거나 ID가 'type'인 모든 select 요소를 선택
+    // ID가 "type-"으로 시작하는 모든 <select> 요소를 선택
     const typeSelects = document.querySelectorAll('[id^="type-"]');
     
+    // 각 select 요소에 대하여 반복문 실행
     typeSelects.forEach(typeSelect => {
+        // typeOptions 객체의 키(옷 종류)를 반복문으로 순회하며 select 요소에 옵션을 추가
         Object.keys(typeOptions).forEach(type => {
+            // option 요소를 생성하고 select 요소에 추가
             const option = document.createElement('option');
             option.value = type;
             option.textContent = type;
@@ -14,16 +18,20 @@ function populateTypeOptions() {
     });
 }
 
+// insert_outfit에서 옷 항목을 동적으로 추가
 function addOutfitItem() {
-    // Move the outfitItemCount declaration outside the function to persist its value across function calls
+    // outfitItemCount 변수가 정의되어 있지 않으면 1로 초기화, 그렇지 않으면 1 증가
     if (typeof window.outfitItemCount === 'undefined') {
         window.outfitItemCount = 1;
     } else {
         window.outfitItemCount++;
     }
 
+    // outfit-container라는 ID를 가진 요소를 찾아서 그 안에 새로운 div 요소를 생성
     const outfitContainer = document.getElementById('outfit-container');
     const outfitItem = document.createElement('div');
+
+    // outfit-item 클래스 추가
     outfitItem.classList.add('outfit-item');
     outfitItem.innerHTML = `
         <label for="type-${window.outfitItemCount}">옷 종류:</label>
@@ -43,7 +51,7 @@ function addOutfitItem() {
     `;
     outfitContainer.appendChild(outfitItem);
     
-    // 새로 추가된 select 요소에 옵션 추가
+    // 새로 추가된 select 요소에 옷 종류 옵션 추가
     const newTypeSelect = document.getElementById(`type-${window.outfitItemCount}`);
     Object.keys(typeOptions).forEach(type => {
         const option = document.createElement('option');
@@ -52,19 +60,25 @@ function addOutfitItem() {
         newTypeSelect.appendChild(option);
     });
 
+    // outfit_count라는 ID를 가진 요소의 값을 현재 window.outfitItemCount로 설정
     document.getElementById('outfit_count').value = window.outfitItemCount;
 }
 
+// insert_outfit에서 옷 종류에 따라 세부 종류 옵션을 동적으로 업데이트
 function updateTypeOptions(index = '') {
+    // index 매개변수는 동적으로 생성된 select 요소의 ID를 구분하기 위함.
     let typeSelect, detailSelect;
 
+    // type-${index}와 detail-${index} ID를 가진 select 요소를 할당
     typeSelect = document.getElementById(`type-${index}`);
     detailSelect = document.getElementById(`detail-${index}`);
 
+    // 사용자가 선택한 옷 종류
     const selectedType = typeSelect.value;
     detailSelect.innerHTML = '<option value="">선택하세요</option>';
 
     if (typeOptions && selectedType in typeOptions) {
+        // 선택한 옷 종류에 따라 세부 종류 옵션을 추가
         typeOptions[selectedType].forEach(option => {
             const optionElement = document.createElement('option');
             optionElement.value = option;
@@ -74,12 +88,20 @@ function updateTypeOptions(index = '') {
     }
 }
 
+// 브랜드 목록을 동적으로 로드 및 요소에 추가
 function loadBrands() {
+    // 브랜드 데이터 요청
     fetch('/brands')
+        // 응답 데이터를 JSON으로 변환
         .then(response => response.json())
+
+        // JSON 데이터는 brands에 저장
         .then(brands => {
             const brandList = document.getElementById('brand-list');
+
+            // 읽어 온 브랜드에 대하여 반복문 실행
             brands.forEach(brand => {
+                // option 요소를 생성하고 brand-list 요소에 추가
                 const option = document.createElement('option');
                 option.value = brand;
                 brandList.appendChild(option);
@@ -113,22 +135,41 @@ function setupFormSubmission() {
     }
 }
 
+// insert_outfit에서 이미지를 추가했을 때 이미지 미리보기
 function previewImage(event) {
+    // FileReader 객체 생성
     const reader = new FileReader();
+
+    // 파일 읽기에 성공했을 때 실행되는 이벤트 핸들러
     reader.onload = function(){
+        // 이미지 미리보기를 위한 img 요소 선택
         const output = document.getElementById('image-preview');
+
+        // img 요소의 src 속성을 파일 경로로 설정
         output.src = reader.result;
+
+        // img 요소를 화면에 표시
         output.style.display = 'block';
     };
+
+    // 파일을 읽어오기
     reader.readAsDataURL(event.target.files[0]);
 }
 
 // 삭제 버튼 클릭 이벤트 처리
+// delete-btn 클래스를 가진 모든 요소를 선택
 const deleteBtns = document.querySelectorAll('.delete-btn');
+
+// delete-btn 요소에 대하여 반복문 실행
 deleteBtns.forEach(btn => {
+    // 각 delete-btn 요소에 클릭 이벤트 리스너 추가
+    // 클릭 이벤트 발생 시 익명 함수 실행
     btn.addEventListener('click', () => {
+        // 클릭된 버튼의 data-id와 data-index 속성 값 읽어오기
         const outfitId = btn.dataset.id;
         const itemIndex = btn.dataset.index;
+
+        // 선택된 항목에 대하여 삭제 함수 호출
         deleteItem(outfitId, itemIndex);
     });
 });
@@ -151,16 +192,20 @@ async function deleteItem(outfitId, index) {
     }
 }
 
+// .like-btn 클래스를 가진 모든 요소에 대하여 클릭 이벤트 리스너 추가
 document.querySelectorAll('.like-btn').forEach(btn => {
     btn.addEventListener('click', function () {
+        // 클릭된 버튼의 data-id와 data-liked 속성 값 읽어오기
         const outfitId = this.dataset.id;
         const isLiked = this.dataset.liked === 'true';
         likeOutfit(outfitId, isLiked, this);
     });
 });
 
+// 좋아요 토글 함수
 async function likeOutfit(outfitId, isLiked, btn) {
     try {
+        // fetch 함수를 사용해 서버에 POST 요청을 보냄
         const response = await fetch(`/like_outfit`, {
             method: 'POST',
             headers: {
@@ -168,17 +213,21 @@ async function likeOutfit(outfitId, isLiked, btn) {
             },
             body: JSON.stringify({ outfitId: outfitId, like: !isLiked })
         });
+
+        // 응답이 성공적으로 왔을 때
         if (response.ok) {
+            // 좋아요 상태를 업데이트하고 버튼의 텍스트 변경
             btn.dataset.liked = (!isLiked).toString();
             btn.textContent = !isLiked ? '좋아요 취소' : '좋아요';
         } else {
-            alert('좋아요 처리 중 오류가 발생했습니다.');
+            alert('Error : 응답이 성공적이지 않습니다.');
         }
     } catch (error) {
-        console.error('Error toggling like:', error);
+        console.error('Error toggling like :', error);
         alert('좋아요 처리 중 오류가 발생했습니다.');
     }
 }
+
 // 삭제 버튼 클릭 이벤트 처리
 document.querySelectorAll('.delete-outfit-btn').forEach(button => {
     button.addEventListener('click', function() {
