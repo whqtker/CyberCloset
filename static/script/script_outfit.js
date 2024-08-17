@@ -287,10 +287,10 @@ function init() {
             const outfitItems = document.querySelectorAll('.outfit-item');
             const outfit = [];
             outfitItems.forEach((item, index) => {
-                const type = item.querySelector(`select[name^="type-"]`).value; // 수정됨
-                const detail = item.querySelector(`select[name^="detail-"]`).value; // 수정됨
-                const brand = item.querySelector(`input[name^="brand-"]`).value; // 수정됨
-                const color = item.querySelector(`input[name^="color-"]`).value; // 수정됨
+                const type = item.querySelector(`select[name^="type-"]`).value; 
+                const detail = item.querySelector(`select[name^="detail-"]`).value; 
+                const brand = item.querySelector(`input[name^="brand-"]`).value; 
+                const color = item.querySelector(`input[name^="color-"]`).value; 
                 if (type && detail && brand && color) {
                     outfit.push({ type, detail, brand, color });
                 }
