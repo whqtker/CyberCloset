@@ -243,7 +243,7 @@ def register():
         password = request.form['password']
         
         # 비밀번호 해싱
-        hashed_password = generate_password_hash(password, method='sha256')
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
         
         # 사용자 정보 저장
         users.insert_one({
