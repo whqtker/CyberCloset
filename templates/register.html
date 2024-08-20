@@ -6,7 +6,9 @@
 </head>
 <body>
     <h1>회원가입</h1>
+    <p class="error">{{ error }}</p>
     <form action="{{ url_for('register') }}" method="post">
+        {{ csrf_token() }}
         <label for="username">사용자 이름:</label>
         <input type="text" id="username" name="username" required><br>
         <label for="email">이메일:</label>

@@ -7,6 +7,7 @@
 <body>
     <h1>Edit Outfit</h1>
     <form action="{{ url_for('update_outfit', outfit_id=outfit._id) }}" method="post" enctype="multipart/form-data">
+        {{ csrf_token() }}
         <input type="hidden" id="outfit_count" name="outfit_count" value="{{ outfit|length }}">
         <div id="outfit-items">
             {% for item in outfit.outfit %}

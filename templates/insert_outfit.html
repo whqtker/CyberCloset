@@ -7,6 +7,7 @@
 </head>
 <body>
     <form action="/save_data_outfit" method="POST" enctype="multipart/form-data">
+        {{ csrf_token() }}
         <div id="outfit-container">
             <div class="outfit-item">
                 <label for="type-0">옷 종류:</label>

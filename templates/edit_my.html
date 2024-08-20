@@ -7,6 +7,7 @@
 <body>
     <h1>Edit Item</h1>
     <form action="{{ url_for('update_my_item', item_id=item._id) }}" method="post" enctype="multipart/form-data">
+        {{ csrf_token() }}
         <label for="type">Type:</label>
         <input type="text" id="type" name="type" value="{{ item.type }}" required><br>
         <label for="detail">Detail:</label>

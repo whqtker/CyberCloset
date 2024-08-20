@@ -82,3 +82,7 @@ a.btn:hover {
 p {
     color: #333;
 }
+
+p.error {
+    color: red;
+}

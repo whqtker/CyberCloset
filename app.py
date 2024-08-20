@@ -6,10 +6,13 @@ import json
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
+import re
+from flask_wtf.csrf import CSRFProtect
 from MongoDBConn import client, db, my, outfit, users
 
 app = Flask(__name__)
-app.secret_key = '시크릿키'  # 세션을 위한 비밀 키 설정
+app.secret_key = os.urandom(24)  # 세션을 위한 비밀 키 설정
+csrf = CSRFProtect(app)
 
 def login_required(f):
     @wraps(f)
@@ -18,6 +21,14 @@ def login_required(f):
             return redirect(url_for('login', next=request.url))
         return f(*args, **kwargs)
     return decorated_function
+
+# 사용자 이름이 알파벳과 숫자로만 구성되었는지 확인
+def is_valid_username(username):
+    return re.match("^[a-zA-Z0-9_]+$", username) is not None
+
+# 이메일 형식이 올바른지 확인
+def is_valid_email(email):
+    return re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
 
 @app.route('/')
 def index():
@@ -259,6 +270,16 @@ def register():
         email = request.form['email']
         password = request.form['password']
         
+        # 입력값 검증
+        if not is_valid_username(username):
+            return render_template('register.html', error='Invalid username. Only letters, numbers, and underscores are allowed.')
+        
+        if not is_valid_email(email):
+            return render_template('register.html', error='Invalid email address.')
+        
+        if len(password) < 8:
+            return render_template('register.html', error='Password must be at least 8 characters long.')
+        
         # 비밀번호 해싱
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
         
@@ -278,6 +299,10 @@ def login():
         username = request.form['username']
         password = request.form['password']
         
+        # 입력값 검증
+        if not is_valid_username(username):
+            return render_template('login.html', error='Invalid username or password.')
+        
         # 사용자 정보 조회
         user = users.find_one({'username': username})
         
@@ -285,7 +310,7 @@ def login():
             session['username'] = username
             return redirect(url_for('index'))
         else:
-            return render_template('login.html', error='Invalid username or password')
+            return render_template('login.html', error='Invalid username or password.')
     return render_template('login.html')
 
 @app.route('/logout')
@@ -294,4 +319,4 @@ def logout():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
