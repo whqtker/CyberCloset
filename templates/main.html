@@ -1,35 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Welcome!</title>
+    <title>Cyber Closet</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main_styles.css') }}">
 </head>
 <body>
-    <h1>Main Page</h1>
     <p>Cyber Closet</p>
     {% if session.get('username') %}
         <p>Welcome, {{ session['username'] }}!</p>
-        <a href="{{ url_for('logout') }}">
-            <button>로그아웃</button>
-        </a>
+        <form action="{{ url_for('auth_routes.logout') }}" method="post">
+            {{ form.hidden_tag() }}
+            <button type="submit">로그아웃</button>
+        </form>
     {% else %}
-        <a href="{{ url_for('register') }}">
+        <a href="{{ url_for('auth_routes.register') }}">
             <button>회원가입</button>
         </a>
-        <a href="{{ url_for('login') }}">
+        <a href="{{ url_for('auth_routes.login') }}">
             <button>로그인</button>
         </a>
     {% endif %}
-    <a href="{{ url_for('insert_my') }}">
+    <a href="{{ url_for('my_routes.insert_my') }}">
         <button>옷 등록하기</button>
     </a>
-    <a href="{{ url_for('show_my') }}">
+    <a href="{{ url_for('my_routes.show_my') }}">
         <button>옷 조회하기</button>
     </a>
-    <a href="{{ url_for('insert_outfit') }}">
+    <a href="{{ url_for('outfit_routes.insert_outfit') }}">
         <button>코디 등록하기</button>
     </a>
-    <a href="{{ url_for('show_outfit') }}">
+    <a href="{{ url_for('outfit_routes.show_outfit') }}">
         <button>코디 조회하기</button>
     </a>
 </body>

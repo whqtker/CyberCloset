@@ -7,8 +7,8 @@
 <body>
     <h1>로그인</h1>
     <p class="error">{{ error }}</p>
-    <form action="{{ url_for('login') }}" method="post">
-        {{ csrf_token() }}
+    <form action="{{ url_for('auth_routes.login') }}" method="post">
+        {{ form.hidden_tag() }}
         <label for="username">사용자 이름:</label>
         <input type="text" id="username" name="username" required><br>
         <label for="password">비밀번호:</label>
@@ -16,6 +16,6 @@
         <button type="submit">로그인</button>
         <a href="{{ url_for('index') }}" class="btn btn-secondary">돌아가기</a>
     </form>
-    <p>계정이 없으신가요? <a href="{{ url_for('register') }}">회원가입</a></p>
+    <p>계정이 없으신가요? <a href="{{ url_for('auth_routes.register') }}">회원가입</a></p>
 </body>
 </html>

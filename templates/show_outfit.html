@@ -46,7 +46,7 @@
     <hr>
     <button type="button" class="like-btn" data-id="{{ outfit_entry._id }}" data-liked="false">좋아요</button>
     <button type="button" class="delete-outfit-btn" data-id="{{ outfit_entry._id }}">Outfit 삭제</button>
-    <a href="{{ url_for('edit_outfit', outfit_id=outfit_entry._id) }}" class="btn btn-primary">수정</a>
+    <a href="{{ url_for('outfit_routes.edit_outfit', outfit_id=outfit_entry._id) }}" class="btn btn-primary">수정</a>
     {% endfor %}
     <a href="/" class="btn btn-secondary">돌아가기</a>
     <script type="module" src="./static/script/script_outfit.js"></script>

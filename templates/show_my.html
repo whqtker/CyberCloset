@@ -32,7 +32,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{{ url_for('edit_my_item', item_id=item._id) }}" class="btn btn-primary">수정</a>
+                    <a href="{{ url_for('my_routes.edit_my_item', item_id=item._id) }}" class="btn btn-primary">수정</a>
                     <button class="delete-btn" data-id="{{ item._id }}">삭제</button>
                 </td>
             </tr>
