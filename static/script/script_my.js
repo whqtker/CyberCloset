@@ -87,33 +87,49 @@ function setupFormSubmission() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 삭제 버튼 클릭 이벤트 처리
+    // 삭제 버튼 클릭 시 deleteItem 함수 호출
     const deleteBtns = document.querySelectorAll('.delete-btn');
     deleteBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const itemId = btn.dataset.id;
-            deleteItem(itemId);
+        btn.addEventListener('click', async (event) => {
+            const itemId = event.target.getAttribute('data-id');
+            if (!itemId) {
+                console.error('Item ID not found');
+                alert('항목 ID를 찾을 수 없습니다.');
+                return;
+            }
+            const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
+            if (!csrfTokenElement) {
+                console.error('CSRF token not found');
+                alert('CSRF 토큰을 찾을 수 없습니다.');
+                return;
+            }
+            try {
+                const response = await fetch(`/delete_my/${itemId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfTokenElement.getAttribute('content') // CSRF 토큰 추가
+                    }
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(result.message);
+                    location.reload();
+                } else {
+                    const result = await response.json().catch(() => null);
+                    if (result && result.error) {
+                        alert(result.error);
+                    } else {
+                        alert('삭제 중 오류가 발생했습니다.');
+                    }
+                }
+            } catch (error) {
+                console.error('Error deleting item:', error);
+                alert('삭제 중 오류가 발생했습니다.');
+            }
         });
     });
 });
-
-// 서버에 삭제 요청을 보내는 함수
-async function deleteItem(id) {
-    try {
-        const response = await fetch(`/delete_my/${id}`, {
-            method: 'DELETE'
-        });
-        if (response.ok) {
-            alert('항목이 삭제되었습니다.');
-            location.reload();
-        } else {
-            alert('삭제 중 오류가 발생했습니다.');
-        }
-    } catch (error) {
-        console.error('Error deleting item:', error);
-        alert('삭제 중 오류가 발생했습니다.');
-    }
-}
 
 function init() {
     populateTypeOptions();

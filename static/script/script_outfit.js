@@ -230,19 +230,36 @@ async function likeOutfit(outfitId, isLiked, btn) {
 
 // 삭제 버튼 클릭 이벤트 처리
 document.querySelectorAll('.delete-outfit-btn').forEach(button => {
-    button.addEventListener('click', function() {
-        const outfitId = this.getAttribute('data-id');
-        if (confirm('정말로 이 Outfit을 삭제하시겠습니까?')) {
-            fetch(`/delete_outfit/${outfitId}`, {
-                method: 'DELETE'
-            })
-            .then(response => {
-                if (response.ok) {
-                    location.reload();
+    button.addEventListener('click', async function() {
+        const outfitId = this.dataset.id;
+        const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
+        if (!csrfTokenElement) {
+            console.error('CSRF token not found');
+            alert('CSRF 토큰을 찾을 수 없습니다.');
+            return;
+        }
+        try {
+            const response = await fetch(`/delete_outfit/${outfitId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfTokenElement.getAttribute('content') // CSRF 토큰 추가
+                }
+            });
+            if (response.ok) {
+                alert('Outfit이 삭제되었습니다.');
+                location.reload();
+            } else {
+                const result = await response.json().catch(() => null);
+                if (result && result.error) {
+                    alert(result.error);
                 } else {
                     alert('삭제 중 오류가 발생했습니다.');
                 }
-            });
+            }
+        } catch (error) {
+            console.error('Error deleting outfit:', error);
+            alert('삭제 중 오류가 발생했습니다.');
         }
     });
 });

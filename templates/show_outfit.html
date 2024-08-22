@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Outfit Display</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/show_outfit_styles.css') }}">
-</head>
+    <head>
+        <title>Outfit Display</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/show_outfit_styles.css') }}">
+        <meta name="csrf-token" content="{{ csrf_token() }}"> <!-- CSRF 토큰 메타 태그 추가 -->
+    </head>
 <body>
     <h1>My Outfits</h1>
     {% for outfit_entry in outfits %}

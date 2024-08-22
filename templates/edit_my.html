@@ -6,8 +6,8 @@
 </head>
 <body>
     <h1>Edit Item</h1>
-    <form action="{{ url_for('update_my_item', item_id=item._id) }}" method="post" enctype="multipart/form-data">
-        {{ csrf_token() }}
+    <form action="{{ url_for('my_routes.update_my_item', item_id=item._id) }}" method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
         <label for="type">Type:</label>
         <input type="text" id="type" name="type" value="{{ item.type }}" required><br>
         <label for="detail">Detail:</label>

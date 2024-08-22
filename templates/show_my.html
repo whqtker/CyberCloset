@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Data Display</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/show_my_styles.css') }}">
-</head>
+    <head>
+        <title>Data Display</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/show_my_styles.css') }}">
+        <meta name="csrf-token" content="{{ csrf_token() }}"> <!-- CSRF 토큰 메타 태그 추가 -->
+    </head>
 <body>
     <h1>My Closet</h1>
     <table>
@@ -42,6 +43,6 @@
 
     <a href="/" class="btn btn-secondary">돌아가기</a>
 
-    <script type="module" src="./static/script/script_my.js"></script>
+    <script type="module" src="{{ url_for('static', filename='script/script_my.js') }}"></script>
 </body>
 </html>

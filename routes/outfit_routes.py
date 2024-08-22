@@ -101,9 +101,11 @@ def like_outfit():
         return jsonify({'error': str(e)}), 500
 
 @outfit_routes.route('/edit_outfit/<string:outfit_id>')
+@login_required
 def edit_outfit(outfit_id):
     outfit_entry = outfit.find_one({'_id': ObjectId(outfit_id)})
-    return render_template('edit_outfit.html', outfit=outfit_entry)
+    form = EmptyForm()
+    return render_template('edit_outfit.html', outfit=outfit_entry, form=form)
 
 @outfit_routes.route('/update_outfit/<string:outfit_id>', methods=['POST'])
 def update_outfit(outfit_id):
@@ -138,7 +140,7 @@ def update_outfit(outfit_id):
         # Update the MongoDB document
         outfit.update_one({'_id': ObjectId(outfit_id)}, {'$set': data})
 
-        return redirect(url_for('show_outfit'))
+        return redirect(url_for('outfit_routes.show_outfit'))
     except Exception as e:
         return jsonify({"message": f"오류 발생: {str(e)}"}), 500
 

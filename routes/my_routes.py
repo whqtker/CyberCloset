@@ -51,18 +51,23 @@ def save_data_my():
     return jsonify({'message': '저장되었습니다.'}), 200
 
 @my_routes.route('/delete_my/<string:item_id>', methods=['DELETE'])
+@login_required
 def delete_my_item(item_id):
     try:
-        my.delete_one({'_id': ObjectId(item_id)})
-        return jsonify({'message': '항목이 삭제되었습니다.'}), 200
+        result = my.delete_one({'_id': ObjectId(item_id)})
+        if result.deleted_count == 1:
+            return jsonify({'message': '항목이 삭제되었습니다.'}), 200
+        else:
+            return jsonify({'error': '항목을 찾을 수 없습니다.'}), 404
     except Exception as e:
         return jsonify({'error': '삭제 중 오류가 발생했습니다.'}), 500
 
-
 @my_routes.route('/edit_my/<string:item_id>')
+@login_required
 def edit_my_item(item_id):
     item = my.find_one({'_id': ObjectId(item_id)})
-    return render_template('edit_my.html', item=item)
+    form = EmptyForm()
+    return render_template('edit_my.html', item=item, form=form)
 
 @my_routes.route('/update_my/<string:item_id>', methods=['POST'])
 def update_my_item(item_id):
@@ -88,7 +93,7 @@ def update_my_item(item_id):
     # MongoDB에 데이터 업데이트
     my.update_one({'_id': ObjectId(item_id)}, {'$set': data})
 
-    return redirect(url_for('show_my'))
+    return redirect(url_for('my_routes.show_my'))
 
 @my_routes.route('/brands')
 def get_brands():
