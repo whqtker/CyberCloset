@@ -46,10 +46,10 @@ def delete_item(outfit_id, index):
             {'_id': ObjectId(outfit_id)},
             {'$pull': {'outfit': None}}
         )
-        return '', 204
+        return jsonify({'message': 'Item deleted successfully'}), 200  # 응답 메시지 추가
     except Exception as e:
         print(e)
-        return '', 500
+        return jsonify({'error': str(e)}), 500
 
 @outfit_routes.route('/save_data_outfit', methods=['POST'])
 @login_required

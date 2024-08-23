@@ -7,14 +7,18 @@ function populateTypeOptions() {
     
     // 각 select 요소에 대하여 반복문 실행
     typeSelects.forEach(typeSelect => {
-        // typeOptions 객체의 키(옷 종류)를 반복문으로 순회하며 select 요소에 옵션을 추가
-        Object.keys(typeOptions).forEach(type => {
-            // option 요소를 생성하고 select 요소에 추가
-            const option = document.createElement('option');
-            option.value = type;
-            option.textContent = type;
-            typeSelect.appendChild(option);
-        });
+        // typeSelect가 null이 아닌지 확인
+        if (typeSelect) {
+            // typeOptions 객체의 키(옷 종류)를 반복문으로 순회하며 select 요소에 옵션을 추가
+            Object.keys(typeOptions).forEach(type => {
+                const option = document.createElement('option');
+                option.value = type;
+                option.textContent = type;
+                if (typeSelect) { // typeSelect가 null이 아닌지 다시 확인
+                    typeSelect.appendChild(option);
+                }
+            });
+        }
     });
 }
 
@@ -29,6 +33,10 @@ function addOutfitItem() {
 
     // outfit-container라는 ID를 가진 요소를 찾아서 그 안에 새로운 div 요소를 생성
     const outfitContainer = document.getElementById('outfit-container');
+    if (!outfitContainer) { // outfitContainer가 null이 아닌지 확인
+        console.error('Outfit container not found');
+        return;
+    }
     const outfitItem = document.createElement('div');
 
     // outfit-item 클래스 추가
@@ -53,15 +61,20 @@ function addOutfitItem() {
     
     // 새로 추가된 select 요소에 옷 종류 옵션 추가
     const newTypeSelect = document.getElementById(`type-${window.outfitItemCount}`);
-    Object.keys(typeOptions).forEach(type => {
-        const option = document.createElement('option');
-        option.value = type;
-        option.textContent = type;
-        newTypeSelect.appendChild(option);
-    });
+    if (newTypeSelect) { // newTypeSelect가 null이 아닌지 확인
+        Object.keys(typeOptions).forEach(type => {
+            const option = document.createElement('option');
+            option.value = type;
+            option.textContent = type;
+            newTypeSelect.appendChild(option);
+        });
+    }
 
     // outfit_count라는 ID를 가진 요소의 값을 현재 window.outfitItemCount로 설정
-    document.getElementById('outfit_count').value = window.outfitItemCount;
+    const outfitCountElement = document.getElementById('outfit_count');
+    if (outfitCountElement) { // outfitCountElement가 null이 아닌지 확인
+        outfitCountElement.value = window.outfitItemCount;
+    }
 }
 
 // insert_outfit에서 옷 종류에 따라 세부 종류 옵션을 동적으로 업데이트
@@ -98,42 +111,18 @@ function loadBrands() {
         // JSON 데이터는 brands에 저장
         .then(brands => {
             const brandList = document.getElementById('brand-list');
-
-            // 읽어 온 브랜드에 대하여 반복문 실행
-            brands.forEach(brand => {
-                // option 요소를 생성하고 brand-list 요소에 추가
-                const option = document.createElement('option');
-                option.value = brand;
-                brandList.appendChild(option);
-            });
+            if (brandList) { // brandList가 null이 아닌지 확인
+                // 읽어 온 브랜드에 대하여 반복문 실행
+                brands.forEach(brand => {
+                    const option = document.createElement('option');
+                    option.value = brand;
+                    option.textContent = brand;
+                    brandList.appendChild(option);
+                });
+            }
         });
 }
 
-function setupFormSubmission() {
-    const form = document.querySelector('form');
-    if (form) { // form 요소가 존재하는지 확인
-        form.addEventListener('submit', (event) => {
-            console.log('submit');
-            event.preventDefault();
-
-        const formData = new FormData(event.target);
-        formData.append('image', document.getElementById('image').files[0]);
-
-        fetch('/save_data_outfit', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message);
-                window.location.reload();
-            })
-            .catch(error => {
-                alert(error.message);
-            });
-        });
-    }
-}
 
 // insert_outfit에서 이미지를 추가했을 때 이미지 미리보기
 function previewImage(event) {
@@ -174,17 +163,22 @@ deleteBtns.forEach(btn => {
     });
 });
 
-// 서버에 삭제 요청을 보내는 함수
+// 서버에 코디의 세부 항목 삭제 요청을 보내는 함수
 async function deleteItem(outfitId, index) {
     try {
         const response = await fetch(`/delete_outfit/${outfitId}/${index}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // CSRF 토큰 추가
+            }
         });
         if (response.ok) {
-            alert('항목이 삭제되었습니다.');
-            location.reload();
+            alert('삭제되었습니다.');
+            location.reload(); // 페이지 새로고침
         } else {
-            alert('삭제 중 오류가 발생했습니다.');
+            const errorText = await response.text();
+            throw new Error(`Network response was not ok: ${errorText}`);
         }
     } catch (error) {
         console.error('Error deleting item:', error);
@@ -205,26 +199,25 @@ document.querySelectorAll('.like-btn').forEach(btn => {
 // 좋아요 토글 함수
 async function likeOutfit(outfitId, isLiked, btn) {
     try {
-        // fetch 함수를 사용해 서버에 POST 요청을 보냄
-        const response = await fetch(`/like_outfit`, {
+        const response = await fetch('/like_outfit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // CSRF 토큰 추가
             },
-            body: JSON.stringify({ outfitId: outfitId, like: !isLiked })
+            body: JSON.stringify({ outfitId, like: !isLiked })
         });
 
-        // 응답이 성공적으로 왔을 때
-        if (response.ok) {
-            // 좋아요 상태를 업데이트하고 버튼의 텍스트 변경
-            btn.dataset.liked = (!isLiked).toString();
-            btn.textContent = !isLiked ? '좋아요 취소' : '좋아요';
-        } else {
-            alert('Error : 응답이 성공적이지 않습니다.');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+
+        const result = await response.json();
+        btn.dataset.liked = result.liked;
+        btn.textContent = result.liked ? '좋아요 취소' : '좋아요';
     } catch (error) {
-        console.error('Error toggling like :', error);
-        alert('좋아요 처리 중 오류가 발생했습니다.');
+        console.error('Error toggling like status:', error);
+        alert('좋아요 상태를 변경하는 중 오류가 발생했습니다.');
     }
 }
 
@@ -266,22 +259,28 @@ document.querySelectorAll('.delete-outfit-btn').forEach(button => {
 
 // 소유 여부 체크박스 변경 이벤트 처리
 document.querySelectorAll('.owned-checkbox').forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
-        const outfitId = this.getAttribute('data-id');
-        const index = this.getAttribute('data-index');
+    checkbox.addEventListener('change', async function() {
+        const outfitId = this.dataset.id;
+        const index = this.dataset.index;
         const owned = this.checked;
-        fetch(`/update_owned/${outfitId}/${index}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ owned })
-        })
-        .then(response => {
+
+        try {
+            const response = await fetch(`/update_owned/${outfitId}/${index}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // CSRF 토큰 추가
+                },
+                body: JSON.stringify({ owned })
+            });
+
             if (!response.ok) {
-                alert('업데이트 중 오류가 발생했습니다.');
+                throw new Error('Network response was not ok');
             }
-        });
+        } catch (error) {
+            console.error('Error updating owned status:', error);
+            alert('소유 여부 업데이트 중 오류가 발생했습니다.');
+        }
     });
 });
 
